@@ -3,569 +3,524 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>다롄 가족 여행 🍊</title>
-  
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
-  <!-- Tailwind CSS & FontAwesome -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
+  <title>제주 & 중국어 여행 단어장</title>
   <style>
-    @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-    body { font-family: 'Pretendard', sans-serif; background-color: #faf7f2; }
-    .active-tab { border-bottom: 3px solid #f97316; color: #ea580c; font-weight: bold; }
-    .cute-card { border-radius: 1.25rem; box-shadow: 0 4px 12px rgba(234, 88, 12, 0.05); }
-    .toast-msg {
-      position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%);
-      background: rgba(45, 55, 72, 0.9); color: white; padding: 8px 18px;
-      border-radius: 20px; font-size: 11px; z-index: 100; transition: opacity 0.3s;
+    :root {
+      --primary-color: #ff7e36;
+      --bg-color: #f8f9fa;
+      --card-bg: #ffffff;
+      --text-color: #333333;
+      --border-color: #e9ecef;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      padding-bottom: 80px;
+    }
+
+    header {
+      background-color: var(--primary-color);
+      color: white;
+      text-align: center;
+      padding: 1.2rem;
+      font-size: 1.3rem;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    /* 탭 메뉴 */
+    .tab-menu {
+      display: flex;
+      background-color: white;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      border: none;
+      background: none;
+      font-size: 1rem;
+      font-weight: bold;
+      color: #777;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+    }
+
+    .tab-btn.active {
+      color: var(--primary-color);
+      border-bottom-color: var(--primary-color);
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 15px;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* 필터 및 검색 */
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    select, input[type="text"] {
+      padding: 8px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    .search-input {
+      flex: 1;
+    }
+
+    /* 카드리스트 */
+    .card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      border: 1px solid var(--border-color);
+      position: relative;
+    }
+
+    .card-tag {
+      display: inline-block;
+      padding: 3px 8px;
+      background-color: #fff3eb;
+      color: var(--primary-color);
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .card-sub {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .cn-pinyin {
+      color: #e65100;
+      font-size: 0.85rem;
+      margin-top: 2px;
+    }
+
+    .delete-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      color: #aaa;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    .delete-btn:hover {
+      color: #ff4d4f;
+    }
+
+    /* FAB 추가 버튼 */
+    .fab {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      background-color: var(--primary-color);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      cursor: pointer;
+      border: none;
+    }
+
+    /* 모달 */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+
+    .modal h3 {
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 4px;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+    }
+
+    .auto-fill-btn {
+      width: 100%;
+      padding: 8px;
+      background-color: #fff3eb;
+      color: var(--primary-color);
+      border: 1px solid var(--primary-color);
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 0.85rem;
+      cursor: pointer;
+      margin-top: 5px;
+      margin-bottom: 10px;
+      transition: all 0.2s;
+    }
+
+    .auto-fill-btn:hover {
+      background-color: #ffe4d3;
+    }
+
+    .modal-btns {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .modal-btns button {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn-submit {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    .btn-cancel {
+      background-color: #e9ecef;
+      color: #555;
     }
   </style>
 </head>
-<body class="text-slate-700 pb-20">
+<body>
 
-  <!-- 헤더 (눈 편한 소프트 코랄/오렌지) -->
-  <header class="bg-gradient-to-r from-amber-200 via-orange-200 to-amber-100 text-slate-800 px-4 py-3.5 sticky top-0 z-50 border-b border-orange-100">
-    <div class="max-w-md mx-auto flex justify-between items-center">
-      <h1 class="text-base font-bold flex items-center gap-1.5 text-orange-950">
-        ✈️ 다롄 가족 여행 🍊✨
-      </h1>
-      <span class="text-[10px] bg-white/60 text-orange-900 px-2 py-0.5 rounded-full flex items-center gap-1 font-medium">
-        <span class="w-1.5 h-1.5 bg-orange-500 rounded-full animate-ping"></span> 실시간 연결
-      </span>
+  <header>🍊 제주 & 중국어 여행 단어장</header>
+
+  <div class="tab-menu">
+    <button class="tab-btn active" onclick="switchTab('jeju')">제주 방언</button>
+    <button class="tab-btn" onclick="switchTab('cn')">중국어 회화</button>
+  </div>
+
+  <div class="container">
+    <!-- 제주 방언 탭 -->
+    <div id="tab-jeju" class="tab-content active">
+      <div class="filter-bar">
+        <input type="text" id="search-jeju" class="search-input" placeholder="검색어 입력..." oninput="renderList()">
+      </div>
+      <div id="list-jeju" class="card-list"></div>
     </div>
-  </header>
 
-  <!-- 메인 탭 메뉴 -->
-  <nav class="bg-white/90 backdrop-blur-md border-b border-orange-100 sticky top-[49px] z-40">
-    <div class="max-w-md mx-auto flex text-center text-xs font-medium">
-      <button onclick="switchTab('schedule')" id="tab-schedule" class="flex-1 py-2.5 active-tab">
-        🗓️ 일정
-      </button>
-      <button onclick="switchTab('places')" id="tab-places" class="flex-1 py-2.5 text-slate-400">
-        📍 장소
-      </button>
-      <button onclick="switchTab('speech')" id="tab-speech" class="flex-1 py-2.5 text-slate-400">
-        💬 회화
-      </button>
+    <!-- 중국어 회화 탭 -->
+    <div id="tab-cn" class="tab-content">
+      <div class="filter-bar">
+        <select id="filter-cn-cat" onchange="renderList()">
+          <option value="전체">카테고리 전체</option>
+          <option value="식당/식음료">식당/식음료</option>
+          <option value="쇼핑/결제">쇼핑/결제</option>
+          <option value="교통/길찾기">교통/길찾기</option>
+          <option value="숙소/기타">숙소/기타</option>
+        </select>
+        <input type="text" id="search-cn" class="search-input" placeholder="검색어 입력..." oninput="renderList()">
+      </div>
+      <div id="list-cn" class="card-list"></div>
     </div>
-  </nav>
+  </div>
 
-  <!-- 메인 컨테이너 -->
-  <main class="max-w-md mx-auto p-3.5">
+  <button class="fab" onclick="openModal()">+</button>
 
-    <!-- 1. 상세 일정 탭 -->
-    <section id="sec-schedule" class="space-y-3">
-      <div class="space-y-2">
-        <div class="flex justify-between items-center px-1">
-          <span class="text-xs font-bold text-orange-700">🗓️ 여행 스케줄</span>
-          <div class="flex gap-1.5">
-            <button onclick="resetToInitialData()" class="text-[11px] bg-slate-200 text-slate-600 px-2 py-1 rounded-full hover:bg-slate-300">
-              🔄 원본 복구
-            </button>
-            <button onclick="openModal('schedule')" class="text-[11px] bg-orange-400 text-white px-2.5 py-1 rounded-full hover:bg-orange-500">
-              + 일정 추가
-            </button>
+  <!-- 추가 모달창 -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <h3 id="modal-title">새 단어 추가</h3>
+      <form id="add-form" onsubmit="handleSubmit(event)">
+        
+        <!-- 제주 방언 필드 -->
+        <div id="fields-jeju">
+          <div class="form-group">
+            <label>제주 방언</label>
+            <input type="text" id="input-jeju-word" placeholder="예: 혼저옵서예">
+          </div>
+          <div class="form-group">
+            <label>표준어 뜻</label>
+            <input type="text" id="input-jeju-meaning" placeholder="예: 어서오세요">
           </div>
         </div>
 
-        <!-- DAY 필터 아이콘 -->
-        <div class="flex gap-1.5 overflow-x-auto pb-1 text-[11px]">
-          <button onclick="filterDay('all')" class="day-btn bg-orange-500 text-white px-3 py-1 rounded-full font-medium shrink-0">전체</button>
-          <button onclick="filterDay(1)" class="day-btn bg-white text-slate-600 border border-orange-100 px-3 py-1 rounded-full shrink-0">🎈 DAY 1</button>
-          <button onclick="filterDay(2)" class="day-btn bg-white text-slate-600 border border-orange-100 px-3 py-1 rounded-full shrink-0">🎈 DAY 2</button>
-          <button onclick="filterDay(3)" class="day-btn bg-white text-slate-600 border border-orange-100 px-3 py-1 rounded-full shrink-0">🎈 DAY 3</button>
-          <button onclick="filterDay(4)" class="day-btn bg-white text-slate-600 border border-orange-100 px-3 py-1 rounded-full shrink-0">🎈 DAY 4</button>
-        </div>
-      </div>
+        <!-- 중국어 회화 필드 -->
+        <div id="fields-cn" style="display: none;">
+          <div class="form-group">
+            <label>한국어 뜻 (입력 후 자동 채우기 가능)</label>
+            <input type="text" id="input-cn-meaning" placeholder="예: 고수 빼주세요, 얼마예요?">
+          </div>
+          
+          <button type="button" class="auto-fill-btn" onclick="autoFillChinese()">🪄 한자/발음 자동 채우기</button>
 
-      <div id="schedule-list" class="space-y-2.5"></div>
-    </section>
+          <div class="form-group">
+            <label>중국어 (한자)</label>
+            <input type="text" id="input-cn-hanzi" placeholder="예: 不要香菜">
+          </div>
+          <div class="form-group">
+            <label>병음 (발음)</label>
+            <input type="text" id="input-cn-pinyin" placeholder="예: Bú yào xiāngcài">
+          </div>
+          <div class="form-group">
+            <label>상황 카테고리</label>
+            <select id="input-cn-cat">
+              <option value="식당/식음료">식당/식음료</option>
+              <option value="쇼핑/결제">쇼핑/결제</option>
+              <option value="교통/길찾기">교통/길찾기</option>
+              <option value="숙소/기타">숙소/기타</option>
+            </select>
+          </div>
+        </div>
 
-    <!-- 2. 장소 탭 -->
-    <section id="sec-places" class="space-y-2.5 hidden">
-      <div class="flex justify-between items-center px-1">
-        <span class="text-xs font-bold text-orange-700">📌 추천 장소</span>
-        <button onclick="openModal('place')" class="text-[11px] bg-orange-400 text-white px-2.5 py-1 rounded-full">
-          + 장소 추가
-        </button>
-      </div>
-      <div id="places-list" class="space-y-2.5"></div>
-    </section>
-
-    <!-- 3. 회화 탭 -->
-    <section id="sec-speech" class="space-y-2.5 hidden">
-      <div class="flex justify-between items-center px-1">
-        <span class="text-xs font-bold text-orange-700">🗣️ 상황별 현지 회화</span>
-        <button onclick="openModal('speech')" class="text-[11px] bg-orange-400 text-white px-2.5 py-1 rounded-full">
-          + 표현 추가
-        </button>
-      </div>
-
-      <div id="speech-categories" class="flex gap-1 overflow-x-auto pb-1 text-[11px]">
-        <button onclick="filterSpeech('전체')" class="sp-cat-btn bg-orange-500 text-white px-2.5 py-1 rounded-full shrink-0 font-medium">전체</button>
-        <button onclick="filterSpeech('식당')" class="sp-cat-btn bg-white text-slate-500 border border-orange-100 px-2.5 py-1 rounded-full shrink-0">🍽️ 식당</button>
-        <button onclick="filterSpeech('교통')" class="sp-cat-btn bg-white text-slate-500 border border-orange-100 px-2.5 py-1 rounded-full shrink-0">🚕 교통</button>
-        <button onclick="filterSpeech('호텔')" class="sp-cat-btn bg-white text-slate-500 border border-orange-100 px-2.5 py-1 rounded-full shrink-0">🏨 호텔</button>
-        <button onclick="filterSpeech('쇼핑')" class="sp-cat-btn bg-white text-slate-500 border border-orange-100 px-2.5 py-1 rounded-full shrink-0">🛍️ 쇼핑</button>
-        <button onclick="filterSpeech('기타/긴급')" class="sp-cat-btn bg-white text-slate-500 border border-orange-100 px-2.5 py-1 rounded-full shrink-0">🚨 긴급/기타</button>
-      </div>
-
-      <div id="speech-list" class="space-y-2.5"></div>
-    </section>
-
-  </main>
-
-  <!-- 복사 안내 토스트 -->
-  <div id="toast" class="toast-msg hidden">📋 가게 이름이 복사되었습니다!</div>
-
-  <!-- 모달 창 -->
-  <div id="modal" class="fixed inset-0 bg-black/30 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-sm w-full p-4 space-y-3 shadow-xl text-xs border border-orange-100 relative">
-      <h3 id="modal-title" class="font-bold border-b border-orange-100 pb-2 text-orange-600 text-sm flex items-center gap-1">✨ 항목 편집</h3>
-      
-      <!-- 일정 폼 -->
-      <div id="form-schedule" class="space-y-2 hidden">
-        <div>
-          <label class="block font-semibold text-slate-500 mb-0.5">일차 (숫자)</label>
-          <input type="number" id="sc-day" min="1" value="1" class="w-full border border-orange-200 rounded-lg p-1.5 focus:outline-orange-400">
+        <div class="modal-btns">
+          <button type="button" class="btn-cancel" onclick="closeModal()">취소</button>
+          <button type="submit" class="btn-submit">등록</button>
         </div>
-        <div>
-          <label class="block font-semibold text-slate-500 mb-0.5">시간 및 장소/일정 제목</label>
-          <input type="text" id="sc-title" placeholder="예: [19:30] 🏨 동강 숙소 체크인" class="w-full border border-orange-200 rounded-lg p-1.5 focus:outline-orange-400">
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-500 mb-0.5">중문 가게/장소명 (클릭 시 복사됨)</label>
-          <input type="text" id="sc-store" placeholder="예: 壹刻壹家酒店(大连东港店)" class="w-full border border-orange-200 rounded-lg p-1.5 focus:outline-orange-400">
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-500 mb-0.5">이동 수단</label>
-          <input type="text" id="sc-trans" placeholder="예: 🚕 택시 | 약 10분" class="w-full border border-orange-200 rounded-lg p-1.5 focus:outline-orange-400">
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-500 mb-0.5">꿀팁 / 메모</label>
-          <textarea id="sc-tip" placeholder="참고할 메모 입력" class="w-full border border-orange-200 rounded-lg p-1.5 h-14 focus:outline-orange-400"></textarea>
-        </div>
-      </div>
-
-      <!-- 장소 폼 -->
-      <div id="form-place" class="space-y-2 hidden">
-        <div>
-          <label class="block font-semibold text-slate-500 mb-0.5">장소명</label>
-          <input type="text" id="pl-title" placeholder="장소명 입력" class="w-full border border-orange-200 rounded-lg p-1.5">
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-500 mb-0.5">카테고리</label>
-          <input type="text" id="pl-cat" placeholder="맛집 / 쇼핑 / 온천 등" class="w-full border border-orange-200 rounded-lg p-1.5">
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-500 mb-0.5">중문 가게/장소명</label>
-          <input type="text" id="pl-store" placeholder="중문 이름 입력" class="w-full border border-orange-200 rounded-lg p-1.5">
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-500 mb-0.5">메모/팁</label>
-          <textarea id="pl-tip" placeholder="꿀팁 입력" class="w-full border border-orange-200 rounded-lg p-1.5 h-14"></textarea>
-        </div>
-      </div>
-
-      <!-- 회화 폼 -->
-      <div id="form-speech" class="space-y-2 hidden relative">
-        <div class="relative">
-          <label class="block font-semibold text-slate-500 mb-0.5">한국어 검색 (자동완성)</label>
-          <input type="text" id="sp-kor" oninput="handleAutoComplete(this.value)" autocomplete="off" placeholder="예: 고수, 얼마, 택시..." class="w-full border border-orange-200 rounded-lg p-1.5 focus:outline-orange-400">
-          <div id="autocomplete-list" class="absolute left-0 right-0 top-full bg-white border border-orange-200 rounded-b-lg shadow-lg max-h-36 overflow-y-auto hidden z-50"></div>
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-500 mb-0.5">중국어 (한자)</label>
-          <input type="text" id="sp-cn" placeholder="예: 不要香菜" class="w-full border border-orange-200 rounded-lg p-1.5">
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-500 mb-0.5">발음 안내</label>
-          <input type="text" id="sp-py" placeholder="예: 부야오 샹차이" class="w-full border border-orange-200 rounded-lg p-1.5">
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-500 mb-0.5">상황 카테고리</label>
-          <input type="text" id="sp-tip" placeholder="식당 / 교통 / 호텔 / 쇼핑" class="w-full border border-orange-200 rounded-lg p-1.5">
-        </div>
-      </div>
-
-      <div class="flex justify-end gap-1.5 pt-2 border-t border-orange-100">
-        <button type="button" onclick="closeModal()" class="px-3 py-1 text-slate-500 bg-slate-100 rounded-full hover:bg-slate-200">취소</button>
-        <button type="button" onclick="saveData()" class="px-3 py-1 text-white bg-orange-400 rounded-full hover:bg-orange-500 font-bold">저장 🍊</button>
-      </div>
+      </form>
     </div>
   </div>
 
   <script>
-    // 1. Firebase 설정
-    const firebaseConfig = {
-      databaseURL: "https://myawesome-a2ea8-default-rtdb.firebaseio.com/"
-    };
-
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
-    const db = firebase.database();
-
-    // 초기 데이터
-    const initialSchedules = [
-      { day: 1, title: "[19:30] 🏨 동강 숙소 체크인", storeName: "壹刻壹家酒店(大连东港店)", trans: "🚕 택시 | 약 10분", tip: "동강 1박 숙소 도착 후 짐 정리" },
-      { day: 1, title: "[20:30] 🍗 저녁: 喝丢一只鞋 (인민로점)", storeName: "喝丢一只鞋(人民路店)", trans: "🏃‍♂️ 도보 | 약 10~15분", tip: "양꼬치 주문 시 츠란 제거 요청! (不要孜然!)" },
-      { day: 1, title: "[21:30] 🌊 동방수성 (베니스 수운하)", storeName: "东方水城", trans: "🚕 택시 | 약 5~10분", tip: "야경 산책 후 동강 숙소 복귀 (1박)" },
-
-      { day: 2, title: "[10:00] 🏨 인터컨티넨탈 호텔", storeName: "大连中远海运洲际酒店", trans: "🚕 택시 | 약 20~25분", tip: "연박 숙소에 미리 짐 보관" },
-      { day: 2, title: "[10:30] 🐬 대련 성해해양세계", storeName: "圣亚海洋世界", trans: "🏃‍♂️ 도보 | 약 5분", tip: "11:00 돌고래 쇼 필수 관람! 118m 해저터널" },
-      { day: 2, title: "[13:00] 🥟 점심: 喜鼎海胆水饺", storeName: "喜鼎海胆水饺(星海店)", trans: "🚕 택시 약 5~10분", tip: "성게알 만두 & 아이용 새우 만두 추천" },
-      { day: 2, title: "[14:30] ☕ Mangata Coffee", storeName: "Mangata Coffee", trans: "🏃‍♂️ 도보 | 약 5~10분", tip: "성해광장 오션뷰 카페 휴식" },
-      { day: 2, title: "[17:00] 🎡 성해광장", storeName: "星海广场", trans: "🏃‍♂️ 도보/택시 5분", tip: "선선한 시간대 미니 놀이동산 이용" },
-      { day: 2, title: "[18:30] 🦆 저녁: 新兴传承烤鸭", storeName: "新兴传承烤鸭", trans: "🏃‍♂️ 도보 | 약 5분", tip: "베이징덕/오리고기 추천" },
-      { day: 2, title: "[19:30] 🍻🎪 성해광장 야경 레이저쇼", storeName: "星海广场", trans: "🚕 택시 | 약 20~25분", tip: "분수&레이저쇼 감상 후 인터컨티넨탈 복귀" },
-
-      { day: 3, title: "[10:30] 🏘️ 동관거리 (东关街)", storeName: "东关街", trans: "🏃‍♂️ 도보 이동", tip: "레트로 감성 고거리 사진 촬영" },
-      { day: 3, title: "[11:30] 🍕 점심: COMMUNE", storeName: "COMMUNE(东关街店)", trans: "🚃 201번 트램 약 15~20분", tip: "수제버거, 피자, 파스타" },
-      { day: 3, title: "[13:00] 🪆 러시아 풍정가", storeName: "俄罗斯风情街", trans: "🚕 택시 | 약 15~20분", tip: "러시아풍 건축물 및 스낵 거리 구경" },
-      { day: 3, title: "[14:30] 🛒 서안로 중앙대도", storeName: "中央大道旅游文化购物中心", trans: "🏃‍♂️ 실내 연결통로 도보", tip: "엄마: 네일아트 / 아빠+아이: 미니소, 키즈존, 마트" },
-      { day: 3, title: "[18:00] 🍢 저녁: 长兴里小吃街", storeName: "长兴里小吃街", trans: "🚕 택시 | 약 15~20분", tip: "탕후루, 철판오징어 등 야시장 탐방" },
-
-      { day: 4, title: "[10:00] 🏨 인터컨티넨탈 체크아웃", storeName: "大连中远海运洲际酒店", trans: "🚕 택시 | 약 25~30분", tip: "모든 짐 지참 후 고라리조트로 이동" },
-      { day: 4, title: "[10:30] ♨️ 고라리조트 (高罗温泉)", storeName: "高罗温泉", trans: "🚕 택시 | 약 15~20분", tip: "짐 보관, 온천사우나 & 키즈 물놀이" },
-      { day: 4, title: "[16:30] ✈️ 대련 주수자 국제공항", storeName: "大连周水子国际机场", trans: "✈️ 출국 수속", tip: "공항 수속 및 여행 마무리" }
+    // 내장 중국어 여행 회화 자동채우기 사전 데이터
+    const dictionary = [
+      { key: "고수", hanzi: "不要香菜", pinyin: "Bú yào xiāngcài", meaning: "고수 빼주세요", cat: "식당/식음료" },
+      { key: "얼마", hanzi: "多少钱？", pinyin: "Duōshao qián?", meaning: "얼마예요?", cat: "쇼핑/결제" },
+      { key: "계산", hanzi: "买单", pinyin: "Mǎidān", meaning: "계산할게요", cat: "식당/식음료" },
+      { key: "영수증", hanzi: "请给我小票", pinyin: "Qǐng gěi wǒ xiǎopiào", meaning: "영수증 주세요", cat: "쇼핑/결제" },
+      { key: "화장실", hanzi: "洗手间在哪里？", pinyin: "Xǐshǒujiān zài nǎli?", meaning: "화장실이 어디인가요?", cat: "교통/길찾기" },
+      { key: "메뉴판", hanzi: "请给我菜单", pinyin: "Qǐng gěi wǒ càidān", meaning: "메뉴판 주세요", cat: "식당/식음료" },
+      { key: "물", hanzi: "请给我水", pinyin: "Qǐng gěi wǒ shuǐ", meaning: "물 좀 주세요", cat: "식당/식음료" },
+      { key: "깎아", hanzi: "便宜一点儿吧", pinyin: "Piányi yīdiǎnr ba", meaning: "좀 깎아주세요", cat: "쇼핑/결제" },
+      { key: "사진", hanzi: "能帮我拍照吗？", pinyin: "Néng bāng wǒ pāizhào ma?", meaning: "사진 좀 찍어주실 수 있나요?", cat: "숙소/기타" },
+      { key: "안녕하세요", hanzi: "你好", pinyin: "Nǐ hǎo", meaning: "안녕하세요", cat: "숙소/기타" },
+      { key: "감사", hanzi: "谢谢", pinyin: "Xièxie", meaning: "감사합니다", cat: "숙소/기타" }
     ];
 
-    const initialPlaces = [
-      { title: "喝丢一只鞋 (인민로점)", cat: "맛집", storeName: "喝丢一只鞋(人民路店)", tip: "양꼬치 츠란 빼달라고 꼭 요청! (不要孜然). 꿔바로우 추천." },
-      { title: "喜鼎海胆水饺", cat: "맛집", storeName: "喜鼎海胆水饺(星海店)", tip: "성게알 만두(海胆水饺) 강추. 안 매운 새우만두(虾仁水饺) 주문." },
-      { title: "Mangata Coffee", cat: "카페", storeName: "Mangata Coffee", tip: "성해바다대교 뷰 맛집 감성 카페." },
-      { title: "COMMUNE (동관거리점)", cat: "맛집", storeName: "COMMUNE(东关街店)", tip: "수제버거 & 피자 맛집. 아이들 먹기 편함." },
-      { title: "고라리조트 (高罗温泉)", cat: "온천", storeName: "高罗温泉", tip: "실내외 온천 & 키즈 풀장. 캐리어 무료 보관 가능." },
-      { title: "서안로 중앙대도", cat: "쇼핑", storeName: "中央大道旅游文化购物中心", tip: "네일샵, 미니소, 키즈카페, 대형마트 집중." }
+    let currentTab = 'jeju';
+
+    // 기본 데이터
+    let jejuData = JSON.parse(localStorage.getItem('jejuData')) || [
+      { id: 1, word: "혼저옵서예", meaning: "어서오세요" },
+      { id: 2, word: "맨도롱 따똣", meaning: "먹기 좋을 만큼 따뜻함" }
     ];
 
-    const initialSpeech = [
-      { kor: "고수 넣지 마세요", cn: "不要香菜", py: "부야오 샹차이", tip: "식당" },
-      { kor: "츠란(향신료) 넣지 마세요", cn: "不要孜然", py: "부야오 쯔란", tip: "식당" },
-      { kor: "안 매운 것으로 주세요", cn: "要不辣的", py: "야오 부 라 더", tip: "식당" },
-      { kor: "계산할게요", cn: "买单", py: "마이단", tip: "식당" },
-      { kor: "이 장소로 가주세요", cn: "请带我去这个地方", py: "칭 다이 워 취 저거 디팡", tip: "교통" },
-      { kor: "트렁크 좀 열어주세요", cn: "请打开后备箱", py: "칭 다카이 호우베이샹", tip: "교통" },
-      { kor: "짐을 보관할 수 있나요?", cn: "可以寄存行李吗？", py: "커이 지춘 싱리 마?", tip: "호텔" },
-      { kor: "얼마인가요?", cn: "多少钱？", py: "두오샤오 치엔?", tip: "쇼핑" },
-      { kor: "화장실이 어디인가요?", cn: "洗手间在哪里？", py: "시쇼우지엔 자이 나리?", tip: "기타/긴급" }
+    let cnData = JSON.parse(localStorage.getItem('cnData')) || [
+      { id: 1, hanzi: "不要香菜", pinyin: "Bú yào xiāngcài", meaning: "고수 빼주세요", cat: "식당/식음료" },
+      { id: 2, hanzi: "多少钱？", pinyin: "Duōshao qián?", meaning: "얼마예요?", cat: "쇼핑/결제" }
     ];
 
-    let currentSchedules = {};
-    let currentPlaces = {};
-    let currentSpeech = {};
-    let selectedDay = 'all';
-    let currentSpeechCategory = '전체';
-    let currentModalType = 'schedule';
-    let editKey = null;
+    function saveData() {
+      localStorage.setItem('jejuData', JSON.stringify(jejuData));
+      localStorage.setItem('cnData', JSON.stringify(cnData));
+    }
 
-    // Firebase 동기화
-    db.ref("schedules").on("value", (snapshot) => {
-      const data = snapshot.val();
-      if (!data) { resetToInitialData(); return; }
-      currentSchedules = data;
-      renderSchedules();
-    });
+    function switchTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
 
-    db.ref("places").on("value", (snapshot) => {
-      const data = snapshot.val();
-      if (!data) {
-        const obj = {};
-        initialPlaces.forEach(item => obj[db.ref("places").push().key] = item);
-        db.ref("places").set(obj);
-        return;
+      if(tab === 'jeju') {
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        document.getElementById('tab-jeju').classList.add('active');
+      } else {
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        document.getElementById('tab-cn').classList.add('active');
       }
-      currentPlaces = data;
-      renderPlaces();
-    });
+      renderList();
+    }
 
-    db.ref("speech").on("value", (snapshot) => {
-      const data = snapshot.val();
-      if (!data) {
-        const obj = {};
-        initialSpeech.forEach(item => obj[db.ref("speech").push().key] = item);
-        db.ref("speech").set(obj);
-        return;
+    function renderList() {
+      if(currentTab === 'jeju') {
+        const query = document.getElementById('search-jeju').value.toLowerCase();
+        const filtered = jejuData.filter(item => 
+          item.word.toLowerCase().includes(query) || item.meaning.toLowerCase().includes(query)
+        );
+        
+        const listEl = document.getElementById('list-jeju');
+        listEl.innerHTML = filtered.map(item => `
+          <div class="card">
+            <div class="card-title">${item.word}</div>
+            <div class="card-sub">${item.meaning}</div>
+            <button class="delete-btn" onclick="deleteItem(${item.id})">&times;</button>
+          </div>
+        `).join('');
+      } else {
+        const query = document.getElementById('search-cn').value.toLowerCase();
+        const cat = document.getElementById('filter-cn-cat').value;
+        
+        const filtered = cnData.filter(item => {
+          const matchesQuery = item.hanzi.toLowerCase().includes(query) || 
+                               item.pinyin.toLowerCase().includes(query) || 
+                               item.meaning.toLowerCase().includes(query);
+          const matchesCat = (cat === '전체') || (item.cat === cat);
+          return matchesQuery && matchesCat;
+        });
+
+        const listEl = document.getElementById('list-cn');
+        listEl.innerHTML = filtered.map(item => `
+          <div class="card">
+            <span class="card-tag">${item.cat}</span>
+            <div class="card-title">${item.hanzi}</div>
+            <div class="cn-pinyin">${item.pinyin}</div>
+            <div class="card-sub" style="margin-top: 4px;">${item.meaning}</div>
+            <button class="delete-btn" onclick="deleteItem(${item.id})">&times;</button>
+          </div>
+        `).join('');
       }
-      currentSpeech = data;
-      renderSpeech();
-    });
-
-    // 복사 기능
-    function copyToClipboard(text) {
-      if (!text) return;
-      navigator.clipboard.writeText(text).then(() => {
-        const toast = document.getElementById('toast');
-        toast.innerText = `📋 "${text}" 복사 완료!`;
-        toast.classList.remove('hidden');
-        setTimeout(() => toast.classList.add('hidden'), 2000);
-      });
     }
 
-    // DAY 필터링
-    function filterDay(day) {
-      selectedDay = day;
-      const btns = document.querySelectorAll('.day-btn');
-      btns.forEach(btn => {
-        if ((day === 'all' && btn.innerText.includes('전체')) || (day !== 'all' && btn.innerText.includes(`DAY ${day}`))) {
-          btn.className = "day-btn bg-orange-500 text-white px-3 py-1 rounded-full font-medium shrink-0 shadow-xs";
-        } else {
-          btn.className = "day-btn bg-white text-slate-600 border border-orange-100 px-3 py-1 rounded-full shrink-0";
-        }
-      });
-      renderSchedules();
-    }
-
-    // 일정 렌더링
-    function renderSchedules() {
-      const container = document.getElementById('schedule-list');
-      container.innerHTML = '';
-
-      if (!currentSchedules || Object.keys(currentSchedules).length === 0) {
-        container.innerHTML = `<div class="text-center py-8 text-orange-300 text-xs">등록된 일정이 없습니다.</div>`;
-        return;
+    function deleteItem(id) {
+      if(currentTab === 'jeju') {
+        jejuData = jejuData.filter(item => item.id !== id);
+      } else {
+        cnData = cnData.filter(item => item.id !== id);
       }
-
-      const sortedKeys = Object.keys(currentSchedules).sort((a, b) => currentSchedules[a].day - currentSchedules[b].day);
-      let currentDayHeader = null;
-
-      sortedKeys.forEach(key => {
-        const item = currentSchedules[key];
-        if (selectedDay !== 'all' && item.day != selectedDay) return;
-
-        if (currentDayHeader !== item.day) {
-          currentDayHeader = item.day;
-          const dayHeader = document.createElement('div');
-          dayHeader.className = 'font-bold text-xs text-orange-700 pb-0.5 mt-3 mb-1.5 flex items-center gap-1 border-b border-orange-200/60';
-          dayHeader.innerHTML = `<span>🍊 DAY ${currentDayHeader}</span>`;
-          container.appendChild(dayHeader);
-        }
-
-        const card = document.createElement('div');
-        card.className = 'bg-white p-3.5 cute-card border border-orange-100/60 space-y-2 text-xs';
-
-        card.innerHTML = `
-          <div class="flex justify-between items-start gap-1">
-            <h3 class="font-bold text-slate-800 text-xs leading-snug">${item.title || ''}</h3>
-            <div class="flex gap-2 text-orange-400 text-xs shrink-0">
-              <button onclick="editItem('schedule', '${key}')" class="hover:text-orange-600 p-1"><i class="fa-solid fa-pen"></i></button>
-              <button onclick="deleteData('schedules', '${key}')" class="hover:text-rose-500 p-1"><i class="fa-solid fa-trash"></i></button>
-            </div>
-          </div>
-          ${item.trans ? `<div class="text-[11px] text-slate-500 flex items-center gap-1"><i class="fa-solid fa-car text-orange-300"></i> ${item.trans}</div>` : ''}
-          ${item.tip ? `<div class="bg-orange-50/70 text-orange-950 text-[11px] p-2 rounded-xl flex items-start gap-1.5"><i class="fa-solid fa-heart text-orange-400 mt-0.5 text-[9px]"></i><div>${item.tip}</div></div>` : ''}
-          ${item.storeName ? `
-            <div onclick="copyToClipboard('${item.storeName}')" class="bg-amber-50/60 hover:bg-amber-100/70 p-2 rounded-xl text-[11px] text-amber-800 font-semibold flex justify-between items-center cursor-pointer border border-amber-100/50 transition-all">
-              <span class="truncate max-w-[220px]">🏷️ ${item.storeName}</span>
-              <span class="text-[9px] bg-white px-2 py-0.5 rounded-full shadow-2xs text-amber-700 shrink-0">가게명 복사 📋</span>
-            </div>
-          ` : ''}
-        `;
-        container.appendChild(card);
-      });
+      saveData();
+      renderList();
     }
 
-    // 장소 렌더링
-    function renderPlaces() {
-      const container = document.getElementById('places-list');
-      container.innerHTML = '';
-
-      Object.keys(currentPlaces).forEach(key => {
-        const item = currentPlaces[key];
-        const card = document.createElement('div');
-        card.className = 'bg-white p-3.5 cute-card border border-orange-100/60 space-y-2 text-xs';
-
-        card.innerHTML = `
-          <div class="flex justify-between items-start">
-            <div class="flex items-center gap-1.5">
-              <span class="text-[9px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-bold">${item.cat || '장소'}</span>
-              <h3 class="font-bold text-slate-800 text-xs">${item.title || ''}</h3>
-            </div>
-            <div class="flex gap-2 text-orange-400 text-xs">
-              <button onclick="editItem('place', '${key}')" class="hover:text-orange-600 p-1"><i class="fa-solid fa-pen"></i></button>
-              <button onclick="deleteData('places', '${key}')" class="hover:text-rose-500 p-1"><i class="fa-solid fa-trash"></i></button>
-            </div>
-          </div>
-          ${item.tip ? `<div class="bg-orange-50/70 text-orange-950 text-[11px] p-2 rounded-xl">${item.tip}</div>` : ''}
-          ${item.storeName ? `
-            <div onclick="copyToClipboard('${item.storeName}')" class="bg-amber-50/60 hover:bg-amber-100/70 p-2 rounded-xl text-[11px] text-amber-800 font-semibold flex justify-between items-center cursor-pointer border border-amber-100/50">
-              <span class="truncate max-w-[220px]">🏷️ ${item.storeName}</span>
-              <span class="text-[9px] bg-white px-2 py-0.5 rounded-full shadow-2xs text-amber-700 shrink-0">가게명 복사 📋</span>
-            </div>
-          ` : ''}
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    // 회화 렌더링
-    function renderSpeech() {
-      const container = document.getElementById('speech-list');
-      container.innerHTML = '';
-
-      Object.keys(currentSpeech).forEach(key => {
-        const item = currentSpeech[key];
-        if (currentSpeechCategory !== '전체' && !(item.tip || '').includes(currentSpeechCategory)) return;
-
-        const card = document.createElement('div');
-        card.className = 'bg-white p-3.5 cute-card border border-orange-100/60 space-y-1.5 text-xs';
-
-        card.innerHTML = `
-          <div class="flex justify-between items-center">
-            <span class="text-[9px] bg-orange-100 text-orange-700 font-bold px-2 py-0.5 rounded-full">${item.tip || '일반'}</span>
-            <div class="flex gap-2 text-orange-400 text-xs">
-              <button onclick="editItem('speech', '${key}')" class="hover:text-orange-600 p-1"><i class="fa-solid fa-pen"></i></button>
-              <button onclick="deleteData('speech', '${key}')" class="hover:text-rose-500 p-1"><i class="fa-solid fa-trash"></i></button>
-            </div>
-          </div>
-          <div class="font-bold text-slate-700 text-xs mt-1">${item.kor || ''}</div>
-          <div class="flex items-center justify-between bg-orange-50/50 p-2.5 rounded-xl border border-orange-100/40">
-            <div>
-              <div class="text-orange-600 font-bold text-sm">${item.cn || ''}</div>
-              <div class="text-[10px] text-slate-400">${item.py || ''}</div>
-            </div>
-            <button onclick="speakChinese('${item.cn}')" class="bg-white p-2 rounded-full shadow-2xs text-orange-500 hover:bg-orange-100 text-sm flex items-center justify-center w-8 h-8">
-              🔊
-            </button>
-          </div>
-        `;
-        container.appendChild(card);
-      });
-    }
-
-    // 모달 및 수정/저장 기능 (수정 오류 완벽 해결)
-    function openModal(type) {
-      currentModalType = type;
-      ['schedule', 'place', 'speech'].forEach(t => {
-        document.getElementById(`form-${t}`).classList.add('hidden');
-      });
-      document.getElementById(`form-${type}`).classList.remove('hidden');
-      document.getElementById('modal').classList.remove('hidden');
+    function openModal() {
+      document.getElementById('modal').classList.add('active');
+      if(currentTab === 'jeju') {
+        document.getElementById('modal-title').innerText = "새 제주 방언 추가";
+        document.getElementById('fields-jeju').style.display = "block";
+        document.getElementById('fields-cn').style.display = "none";
+      } else {
+        document.getElementById('modal-title').innerText = "새 중국어 회화 추가";
+        document.getElementById('fields-jeju').style.display = "none";
+        document.getElementById('fields-cn').style.display = "block";
+      }
     }
 
     function closeModal() {
-      document.getElementById('modal').classList.add('hidden');
-      editKey = null;
+      document.getElementById('modal').classList.remove('active');
+      document.getElementById('add-form').reset();
     }
 
-    function editItem(type, key) {
-      editKey = key;
-      openModal(type);
+    // 🪄 [방법 1] 자동 채우기 핵심 기능
+    function autoFillChinese() {
+      const inputMeaning = document.getElementById('input-cn-meaning').value.trim();
+      
+      if (!inputMeaning) {
+        alert("한국어 뜻을 먼저 입력해 주세요! (예: 고수, 얼마, 계산, 화장실 등)");
+        return;
+      }
 
-      if (type === 'schedule') {
-        const item = currentSchedules[key];
-        document.getElementById('sc-day').value = item.day || 1;
-        document.getElementById('sc-title').value = item.title || '';
-        document.getElementById('sc-store').value = item.storeName || '';
-        document.getElementById('sc-trans').value = item.trans || '';
-        document.getElementById('sc-tip').value = item.tip || '';
-      } else if (type === 'place') {
-        const item = currentPlaces[key];
-        document.getElementById('pl-title').value = item.title || '';
-        document.getElementById('pl-cat').value = item.cat || '';
-        document.getElementById('pl-store').value = item.storeName || '';
-        document.getElementById('pl-tip').value = item.tip || '';
-      } else if (type === 'speech') {
-        const item = currentSpeech[key];
-        document.getElementById('sp-kor').value = item.kor || '';
-        document.getElementById('sp-cn').value = item.cn || '';
-        document.getElementById('sp-py').value = item.py || '';
-        document.getElementById('sp-tip').value = item.tip || '';
+      // 입력한 한국어 단어와 사전의 키워드 매칭
+      const matched = dictionary.find(item => 
+        inputMeaning.includes(item.key) || item.meaning.includes(inputMeaning)
+      );
+
+      if (matched) {
+        document.getElementById('input-cn-meaning').value = matched.meaning;
+        document.getElementById('input-cn-hanzi').value = matched.hanzi;
+        document.getElementById('input-cn-pinyin').value = matched.pinyin;
+        document.getElementById('input-cn-cat').value = matched.cat;
+      } else {
+        alert("사전에 등록되지 않은 표현입니다. 한자와 발음을 직접 입력해 주세요.");
       }
     }
 
-    function saveData() {
-      if (currentModalType === 'schedule') {
-        const payload = {
-          day: parseInt(document.getElementById('sc-day').value) || 1,
-          title: document.getElementById('sc-title').value.trim(),
-          storeName: document.getElementById('sc-store').value.trim(),
-          trans: document.getElementById('sc-trans').value.trim(),
-          tip: document.getElementById('sc-tip').value.trim()
-        };
-        if (editKey) db.ref(`schedules/${editKey}`).update(payload);
-        else db.ref('schedules').push(payload);
+    function handleSubmit(e) {
+      e.preventDefault();
+      
+      if(currentTab === 'jeju') {
+        const word = document.getElementById('input-jeju-word').value.trim();
+        const meaning = document.getElementById('input-jeju-meaning').value.trim();
+        if(!word || !meaning) return alert("모든 항목을 입력해 주세요.");
+        
+        jejuData.push({ id: Date.now(), word, meaning });
+      } else {
+        const hanzi = document.getElementById('input-cn-hanzi').value.trim();
+        const pinyin = document.getElementById('input-cn-pinyin').value.trim();
+        const meaning = document.getElementById('input-cn-meaning').value.trim();
+        const cat = document.getElementById('input-cn-cat').value;
+        if(!hanzi || !meaning) return alert("한국어 뜻과 한자는 필수 입력 항목입니다.");
 
-      } else if (currentModalType === 'place') {
-        const payload = {
-          title: document.getElementById('pl-title').value.trim(),
-          cat: document.getElementById('pl-cat').value.trim(),
-          storeName: document.getElementById('pl-store').value.trim(),
-          tip: document.getElementById('pl-tip').value.trim()
-        };
-        if (editKey) db.ref(`places/${editKey}`).update(payload);
-        else db.ref('places').push(payload);
-
-      } else if (currentModalType === 'speech') {
-        const payload = {
-          kor: document.getElementById('sp-kor').value.trim(),
-          cn: document.getElementById('sp-cn').value.trim(),
-          py: document.getElementById('sp-py').value.trim(),
-          tip: document.getElementById('sp-tip').value.trim() || '기타'
-        };
-        if (editKey) db.ref(`speech/${editKey}`).update(payload);
-        else db.ref('speech').push(payload);
+        cnData.push({ id: Date.now(), hanzi, pinyin, meaning, cat });
       }
 
+      saveData();
+      renderList();
       closeModal();
     }
 
-    function deleteData(path, key) {
-      if (confirm("이 항목을 삭제하시겠습니까?")) {
-        db.ref(`${path}/${key}`).remove();
-      }
-    }
-
-    function switchTab(type) {
-      ['schedule', 'places', 'speech'].forEach(t => {
-        document.getElementById(`sec-${t}`).classList.add('hidden');
-        document.getElementById(`tab-${t}`).classList.remove('active-tab');
-        document.getElementById(`tab-${t}`).classList.add('text-slate-400');
-      });
-      document.getElementById(`sec-${type}`).classList.remove('hidden');
-      document.getElementById(`tab-${type}`).classList.add('active-tab');
-      document.getElementById(`tab-${type}`).classList.remove('text-slate-400');
-    }
-
-    function filterSpeech(cat) {
-      currentSpeechCategory = cat;
-      document.querySelectorAll('.sp-cat-btn').forEach(btn => {
-        if (btn.innerText.includes(cat)) {
-          btn.className = "sp-cat-btn bg-orange-500 text-white px-2.5 py-1 rounded-full shrink-0 font-medium";
-        } else {
-          btn.className = "sp-cat-btn bg-white text-slate-500 border border-orange-100 px-2.5 py-1 rounded-full shrink-0";
-        }
-      });
-      renderSpeech();
-    }
-
-    function resetToInitialData() {
-      if (confirm("모든 일정을 초기 데이터로 다시 복구하시겠습니까?")) {
-        const schObj = {}, plObj = {}, spObj = {};
-        initialSchedules.forEach(item => schObj[db.ref("schedules").push().key] = item);
-        initialPlaces.forEach(item => plObj[db.ref("places").push().key] = item);
-        initialSpeech.forEach(item => spObj[db.ref("speech").push().key] = item);
-
-        db.ref("schedules").set(schObj);
-        db.ref("places").set(plObj);
-        db.ref("speech").set(spObj);
-      }
-    }
-
-    function speakChinese(text) {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'zh-CN';
-        utterance.rate = 0.85;
-        window.speechSynthesis.speak(utterance);
-      }
-    }
+    // 초기 실행
+    renderList();
   </script>
 </body>
 </html>
