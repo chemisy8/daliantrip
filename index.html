@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>다련 가족 여행</title>
+  <title>다롄 가족 여행</title>
   
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-  <!-- Tailwind CSS -->
+  <!-- Tailwind CSS & FontAwesome -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
@@ -25,7 +25,7 @@
   <header class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-4 sticky top-0 z-50 shadow-md">
     <div class="max-w-md mx-auto flex justify-between items-center">
       <h1 class="text-xl font-bold flex items-center gap-2">
-        ✈️ 다련 가족 여행 💕
+        ✈️ 다롄 가족 여행 💕
       </h1>
       <span class="text-xs bg-white/20 px-2.5 py-1 rounded-full flex items-center gap-1">
         <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> 실시간 동기화
@@ -95,13 +95,12 @@
 
   </main>
 
-  <!-- 모달 (데이터 추가/수정용) -->
+  <!-- 모달 -->
   <div id="modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-xl max-w-sm w-full p-5 space-y-4 shadow-xl">
-      <h3 id="modal-title" class="text-md font-bold border-b pb-2 text-slate-800">항목 추가</h3>
+      <h3 id="modal-title" class="text-md font-bold border-b pb-2 text-slate-800">일정 추가/수정</h3>
       
-      <!-- 일정 모달 폼 -->
-      <form id="form-schedule" class="space-y-3 text-sm hidden">
+      <form id="form-schedule" class="space-y-3 text-sm">
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">일차 (숫자만)</label>
           <input type="number" id="sc-day" min="1" value="1" class="w-full border rounded p-2">
@@ -124,7 +123,6 @@
         </div>
       </form>
 
-      <!-- 버튼 영역 -->
       <div class="flex justify-end gap-2 pt-2 border-t">
         <button onclick="closeModal()" class="px-3 py-1.5 text-xs text-slate-600 bg-slate-100 rounded hover:bg-slate-200">취소</button>
         <button onclick="saveData()" class="px-3 py-1.5 text-xs text-white bg-indigo-600 rounded hover:bg-indigo-700">저장</button>
@@ -133,49 +131,50 @@
   </div>
 
   <script>
-    // 1. Firebase 설정 (본인의 firebaseConfig 값 유지)
+    // 1. Firebase 본인 설정 입력
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
+      databaseURL: "https://myawesome-a2ea8-default-rtdb.firebaseio.com/"
     };
 
-    // Firebase 초기화
     if (!firebase.apps.length) {
       firebase.initializeApp(firebaseConfig);
     }
     const db = firebase.database();
 
+    // 기본 일정 데이터 (최초 1회만 DB로 입력됨)
+    const initialSchedules = [
+      { day: 1, title: "[12:30] 다롄 저우수이쯔 국제공항 (大连周水子国际机场)", addr: "甘井子区 迎客路 100号", trans: "✈️ 한국 출발 후 도착 / 입국 수속", tip: "💡 입국 심사 시 가족 단체 라인 활용, 디디(DiDi) 앱으로 호출 시 공항 P2 주차장에서 승차" },
+      { day: 1, title: "[14:00] 숙소 체크인 및 짐 보관", addr: "沙河口区 中山路 572号", trans: "🚕 택시 약 25~30분 (약 35~40元)", tip: "💡 아이 컨디션 조절을 위해 체크인 후 30분 휴식 권장" },
+      { day: 1, title: "[16:30] 성해광장 (星海广场)", addr: "沙河口区 中山路 572号", trans: "🚶 도보 이동 (또는 택시 5분)", tip: "💡 아시아 최대 광장! 갈매기 모이주기 체험 인기. 바닷바람이 강해 유아용 바람막이 겉옷 필수" },
+      { day: 1, title: "[18:30] 저녁: Mangata Coffee & 레스토랑", addr: "沙河口区 星海广场 滨海西路", trans: "🚶 광장 내 도보 5분", tip: "💡 2층 테라스 창가석이 성海湾大桥 야경 뷰 명당! 아이용 감자튀김/파스타 판매" },
+      { day: 2, title: "[10:00] 성해공원 (星海公园)", addr: "沙河口区 中山路 634号", trans: "🚕 택시 약 10분", tip: "💡 해안 산책로가 평탄하여 유모차 이동 매우 편리. 소형 놀이기구 구역 유아 맞춤" },
+      { day: 2, title: "[12:30] 점심: 시딩 성게알 만두 (喜鼎海胆水饺)", addr: "中山区 中山路 108号", trans: "🚕 택시 약 20분", tip: "💡 웨이팅이 길어 12시 이전 방문 필수! 아이용 삼선수교(새우계란) 추천" },
+      { day: 2, title: "[15:00] 동방수성 (东方水城 - 베네치아 운하 마을)", addr: "中山区 港浦路 3号", trans: "🚕 택시 약 15분", tip: "💡 곤돌라 배 탑승 체험 인기. 오후 3~4시 사이 햇살이 예뻐 가족사진 명소" },
+      { day: 3, title: "[09:30] 다롄 성해 해양성공원 / 수족관 (圣亚海洋世界)", addr: "沙河口区 中山路 608号", trans: "🚕 택시 약 15분", tip: "💡 어린이 동반 필수 코스! 돌고래 및 벨루가 공연 시간 입장 직후 확인" },
+      { day: 3, title: "[13:00] 점심: 현지 유명 식당 / 만두전문점", addr: "沙河口区 中山路 608号", trans: "🚶 도보 이동", tip: "💡 아이가 먹을 안 매운 계란볶음밥(鸡蛋炒饭)과 꿔바로우 사전 주문" },
+      { day: 3, title: "[18:00] 저녁: 헤디우이즈셰 양꼬치 (喝丢一只鞋)", addr: "中山区 民主广场 附近", trans: "🚕 택시 약 20분", tip: "💡 양꼬치는 안 매운 맛(不辣) 요청. 꿔바로우가 바삭함" },
+      { day: 4, title: "[10:00] 대형마트 쇼핑 (대윤발 大润发)", addr: "中山区 胜利广场 附近", trans: "🚕 택시 약 10분", tip: "💡 해산물 스낵, 칭따오 맥주, 아이 간식류 구매" },
+      { day: 4, title: "[12:30] 다롄 저우수이쯔 공항 이동 및 귀국", addr: "甘井子区 迎客路 100号", trans: "🚕 택시 약 30분", tip: "💡 공항 내 유아 휴게실 이용 가능. 남은 위안화 현금 소진" }
+    ];
+
     let currentSchedules = {};
-    let currentPlaces = {};
-    let currentSpeech = {};
-    let currentModalType = '';
     let editKey = null;
 
-    // -------------------------------------------------------------
-    // 🔥 [핵심 수정 위치] Firebase DB 실시간 수신부
-    // 더 이상 코드에서 DB 데이터를 멋대로 리셋하거나 덮어쓰지 않습니다.
-    // -------------------------------------------------------------
+    // Firebase DB 연결 및 자동 채우기 로직
     db.ref("schedules").on("value", (snapshot) => {
-      currentSchedules = snapshot.val() || {};
+      const data = snapshot.val();
+      
+      // DB가 최초로 비어있을 때 딱 1번만 기본 일정을 자동으로 밀어 넣어줍니다!
+      if (!data && !localStorage.getItem("db_initialized")) {
+        localStorage.setItem("db_initialized", "true");
+        initialSchedules.forEach(item => db.ref("schedules").push(item));
+        return;
+      }
+
+      currentSchedules = data || {};
       renderSchedules();
     });
 
-    db.ref("places").on("value", (snapshot) => {
-      currentPlaces = snapshot.val() || {};
-      renderPlaces();
-    });
-
-    db.ref("speech").on("value", (snapshot) => {
-      currentSpeech = snapshot.val() || {};
-      renderSpeech();
-    });
-
-    // 탭 전환
     function switchTab(type) {
       ['schedule', 'places', 'speech'].forEach(t => {
         document.getElementById(`sec-${t}`).classList.add('hidden');
@@ -187,7 +186,6 @@
       document.getElementById(`tab-${type}`).classList.remove('text-slate-500');
     }
 
-    // 일정 목록 렌더링
     function renderSchedules() {
       const container = document.getElementById('schedule-list');
       container.innerHTML = '';
@@ -197,7 +195,6 @@
         return;
       }
 
-      // 일차(Day)별 정렬
       const sortedKeys = Object.keys(currentSchedules).sort((a, b) => currentSchedules[a].day - currentSchedules[b].day);
       let currentDay = null;
 
@@ -222,46 +219,38 @@
             <h3 class="font-bold text-slate-800 text-sm">${item.title || ''}</h3>
             <div class="flex gap-1 text-slate-400 text-xs">
               <button onclick="editSchedule('${key}')" class="p-1 hover:text-indigo-600"><i class="fa-solid fa-pen"></i></button>
-              <button onclick="deleteData('schedules', '${key}')" class="p-1 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>
+              <button onclick="deleteData('${key}')" class="p-1 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>
             </div>
           </div>
           ${item.addr ? `<p class="text-xs text-slate-500 flex items-center gap-1"><i class="fa-solid fa-location-dot text-slate-400"></i> ${item.addr}</p>` : ''}
           ${item.trans ? `<div class="bg-slate-50 text-slate-600 text-xs p-2 rounded flex items-center gap-1.5"><i class="fa-solid fa-car text-indigo-500"></i> ${item.trans}</div>` : ''}
           ${item.tip ? `<div class="bg-amber-50 text-amber-800 text-xs p-2 rounded flex items-start gap-1.5"><i class="fa-regular fa-lightbulb text-amber-500 mt-0.5"></i> <div>${item.tip}</div></div>` : ''}
-          ${item.addr ? `<div class="text-right pt-1"><a href="${mapUrl}" target="_blank" class="inline-flex items-center gap-1 text-[11px] bg-sky-50 text-sky-600 px-2 py-1 rounded hover:bg-sky-100"><i class="fa-solid fa-map"></i> 고덕지도 연결</a></div>` : ''}
+          ${item.addr ? `<div class="text-right pt-1"><a href="${mapUrl}" target="_blank" class="inline-flex items-center gap-1 text-[11px] bg-sky-50 text-sky-600 px-2.5 py-1 rounded-full hover:bg-sky-100 font-medium"><i class="fa-solid fa-map"></i> 고덕지도 연결</a></div>` : ''}
         `;
         container.appendChild(card);
       });
     }
 
-    function renderPlaces() { /* 장소 렌더링 로직 */ }
-    function renderSpeech() { /* 회화 렌더링 로직 */ }
-
-    // 데이터 삭제 함수 (DB에서 직접 삭제)
-    function deleteData(path, key) {
-      if (confirm("정말 이 항목을 삭제하시겠습니까?")) {
-        db.ref(`${path}/${key}`).remove();
+    function deleteData(key) {
+      if (confirm("이 일정을 삭제하시겠습니까?")) {
+        db.ref(`schedules/${key}`).remove();
       }
     }
 
-    // 모달 제어
-    function openModal(type) {
-      currentModalType = type;
+    function openModal() {
       editKey = null;
-      document.getElementById('modal').classList.remove('hidden');
-      document.getElementById('form-schedule').classList.remove('hidden');
       document.getElementById('form-schedule').reset();
+      document.getElementById('modal').classList.remove('hidden');
     }
 
     function closeModal() {
       document.getElementById('modal').classList.add('hidden');
     }
 
-    // 일정 수정
     function editSchedule(key) {
       const item = currentSchedules[key];
       if (!item) return;
-      openModal('schedule');
+      openModal();
       editKey = key;
       document.getElementById('sc-day').value = item.day || 1;
       document.getElementById('sc-title').value = item.title || '';
@@ -270,22 +259,24 @@
       document.getElementById('sc-tip').value = item.tip || '';
     }
 
-    // 데이터 저장 (Firebase DB 업데이트)
     function saveData() {
-      if (currentModalType === 'schedule') {
-        const payload = {
-          day: parseInt(document.getElementById('sc-day').value) || 1,
-          title: document.getElementById('sc-title').value.trim(),
-          addr: document.getElementById('sc-addr').value.trim(),
-          trans: document.getElementById('sc-trans').value.trim(),
-          tip: document.getElementById('sc-tip').value.trim()
-        };
+      const payload = {
+        day: parseInt(document.getElementById('sc-day').value) || 1,
+        title: document.getElementById('sc-title').value.trim(),
+        addr: document.getElementById('sc-addr').value.trim(),
+        trans: document.getElementById('sc-trans').value.trim(),
+        tip: document.getElementById('sc-tip').value.trim()
+      };
 
-        if (editKey) {
-          db.ref(`schedules/${editKey}`).update(payload);
-        } else {
-          db.ref('schedules').push(payload);
-        }
+      if (!payload.title) {
+        alert("제목을 입력해주세요!");
+        return;
+      }
+
+      if (editKey) {
+        db.ref(`schedules/${editKey}`).update(payload);
+      } else {
+        db.ref('schedules').push(payload);
       }
       closeModal();
     }
