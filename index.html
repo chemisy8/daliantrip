@@ -54,17 +54,20 @@
     <!-- 1. 상세 일정 탭 -->
     <section id="sec-schedule" class="space-y-4">
       <div class="flex justify-between items-center mb-2">
-        <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+        <h2 class="text-base font-bold text-slate-800 flex items-center gap-1">
           🗺️ 시간대별 이동 동선
         </h2>
-        <button onclick="openModal('schedule')" class="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700 shadow-sm">
-          + 일정 추가
-        </button>
+        <div class="flex gap-1.5">
+          <!-- 🔄 데이터 초기화/복구 버튼 -->
+          <button onclick="resetToInitialData()" class="text-xs bg-amber-500 text-white px-2.5 py-1.5 rounded-lg hover:bg-amber-600 shadow-sm flex items-center gap-1">
+            <i class="fa-solid fa-rotate-left"></i> 기본 복구
+          </button>
+          <button onclick="openModal('schedule')" class="text-xs bg-indigo-600 text-white px-2.5 py-1.5 rounded-lg hover:bg-indigo-700 shadow-sm">
+            + 일정 추가
+          </button>
+        </div>
       </div>
-
-      <div id="schedule-list" class="space-y-4">
-        <!-- 일정 리스트 렌더링 영역 -->
-      </div>
+      <div id="schedule-list" class="space-y-4"></div>
     </section>
 
     <!-- 2. 장소 & 꿀팁 탭 -->
@@ -75,9 +78,7 @@
           + 장소 추가
         </button>
       </div>
-      <div id="places-list" class="space-y-3">
-        <!-- 장소 리스트 렌더링 영역 -->
-      </div>
+      <div id="places-list" class="space-y-3"></div>
     </section>
 
     <!-- 3. 생존 회화 탭 -->
@@ -88,38 +89,77 @@
           + 표현 추가
         </button>
       </div>
-      <div id="speech-list" class="space-y-3">
-        <!-- 회화 리스트 렌더링 영역 -->
-      </div>
+      <div id="speech-list" class="space-y-3"></div>
     </section>
 
   </main>
 
-  <!-- 모달 -->
+  <!-- 모달 (추가/수정용) -->
   <div id="modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-xl max-w-sm w-full p-5 space-y-4 shadow-xl">
-      <h3 id="modal-title" class="text-md font-bold border-b pb-2 text-slate-800">일정 추가/수정</h3>
+      <h3 id="modal-title" class="text-md font-bold border-b pb-2 text-slate-800">항목 추가/수정</h3>
       
-      <form id="form-schedule" class="space-y-3 text-sm">
+      <!-- 일정 모달 폼 -->
+      <form id="form-schedule" class="space-y-3 text-sm hidden">
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">일차 (숫자만)</label>
           <input type="number" id="sc-day" min="1" value="1" class="w-full border rounded p-2">
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">시간 및 제목</label>
-          <input type="text" id="sc-title" placeholder="예: [12:30] 다렌 공항 도착" class="w-full border rounded p-2">
+          <input type="text" id="sc-title" placeholder="예: [19:30] 동강 숙소 체크인" class="w-full border rounded p-2">
         </div>
         <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">주소 (고덕지도 검색용)</label>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">주소/위치 (고덕지도용)</label>
           <input type="text" id="sc-addr" placeholder="주소를 입력하세요" class="w-full border rounded p-2">
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">이동 정보</label>
-          <input type="text" id="sc-trans" placeholder="예: 택시 약 25분 (35元)" class="w-full border rounded p-2">
+          <input type="text" id="sc-trans" placeholder="예: 🚕 택시 | 약 10분 소요" class="w-full border rounded p-2">
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-600 mb-1">꿀팁 / 메모</label>
-          <textarea id="sc-tip" placeholder="참고할 정보 작성" class="w-full border rounded p-2 h-20"></textarea>
+          <textarea id="sc-tip" placeholder="참고 메모 입력" class="w-full border rounded p-2 h-20"></textarea>
+        </div>
+      </form>
+
+      <!-- 장소 모달 폼 -->
+      <form id="form-place" class="space-y-3 text-sm hidden">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">장소/상호명</label>
+          <input type="text" id="pl-title" placeholder="예: 喜鼎海胆水饺 (성해湾1호점)" class="w-full border rounded p-2">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">카테고리</label>
+          <input type="text" id="pl-cat" placeholder="예: 맛집 / 명소 / 쇼핑 / 숙소" class="w-full border rounded p-2">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">주소</label>
+          <input type="text" id="pl-addr" placeholder="중문 주소 입력" class="w-full border rounded p-2">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">꿀팁 & 메모</label>
+          <textarea id="pl-tip" placeholder="추천 메뉴, 이용 꿀팁 등" class="w-full border rounded p-2 h-20"></textarea>
+        </div>
+      </form>
+
+      <!-- 회화 모달 폼 -->
+      <form id="form-speech" class="space-y-3 text-sm hidden">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">한국어 뜻</label>
+          <input type="text" id="sp-kor" placeholder="예: 고수 넣지 말아주세요" class="w-full border rounded p-2">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">중국어 (한자)</label>
+          <input type="text" id="sp-cn" placeholder="예: 不要香菜" class="w-full border rounded p-2">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">발음 (병음/한글발음)</label>
+          <input type="text" id="sp-py" placeholder="예: Bú yào xiāngcài (부야오 샹차이)" class="w-full border rounded p-2">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">상황/팁</label>
+          <input type="text" id="sp-tip" placeholder="예: 식당 주문 시" class="w-full border rounded p-2">
         </div>
       </form>
 
@@ -131,7 +171,7 @@
   </div>
 
   <script>
-    // 1. Firebase 본인 설정 입력
+    // 1. Firebase Config (본인 설정값 유지)
     const firebaseConfig = {
       databaseURL: "https://myawesome-a2ea8-default-rtdb.firebaseio.com/"
     };
@@ -141,40 +181,107 @@
     }
     const db = firebase.database();
 
-    // 기본 일정 데이터 (최초 1회만 DB로 입력됨)
+    // 🎯 원본 DAY 1 ~ DAY 4 일정 데이터
     const initialSchedules = [
-      { day: 1, title: "[12:30] 다롄 저우수이쯔 국제공항 (大连周水子国际机场)", addr: "甘井子区 迎客路 100号", trans: "✈️ 한국 출발 후 도착 / 입국 수속", tip: "💡 입국 심사 시 가족 단체 라인 활용, 디디(DiDi) 앱으로 호출 시 공항 P2 주차장에서 승차" },
-      { day: 1, title: "[14:00] 숙소 체크인 및 짐 보관", addr: "沙河口区 中山路 572号", trans: "🚕 택시 약 25~30분 (약 35~40元)", tip: "💡 아이 컨디션 조절을 위해 체크인 후 30분 휴식 권장" },
-      { day: 1, title: "[16:30] 성해광장 (星海广场)", addr: "沙河口区 中山路 572号", trans: "🚶 도보 이동 (또는 택시 5분)", tip: "💡 아시아 최대 광장! 갈매기 모이주기 체험 인기. 바닷바람이 강해 유아용 바람막이 겉옷 필수" },
-      { day: 1, title: "[18:30] 저녁: Mangata Coffee & 레스토랑", addr: "沙河口区 星海广场 滨海西路", trans: "🚶 광장 내 도보 5분", tip: "💡 2층 테라스 창가석이 성海湾大桥 야경 뷰 명당! 아이용 감자튀김/파스타 판매" },
-      { day: 2, title: "[10:00] 성해공원 (星海公园)", addr: "沙河口区 中山路 634号", trans: "🚕 택시 약 10분", tip: "💡 해안 산책로가 평탄하여 유모차 이동 매우 편리. 소형 놀이기구 구역 유아 맞춤" },
-      { day: 2, title: "[12:30] 점심: 시딩 성게알 만두 (喜鼎海胆水饺)", addr: "中山区 中山路 108号", trans: "🚕 택시 약 20분", tip: "💡 웨이팅이 길어 12시 이전 방문 필수! 아이용 삼선수교(새우계란) 추천" },
-      { day: 2, title: "[15:00] 동방수성 (东方水城 - 베네치아 운하 마을)", addr: "中山区 港浦路 3号", trans: "🚕 택시 약 15분", tip: "💡 곤돌라 배 탑승 체험 인기. 오후 3~4시 사이 햇살이 예뻐 가족사진 명소" },
-      { day: 3, title: "[09:30] 다롄 성해 해양성공원 / 수족관 (圣亚海洋世界)", addr: "沙河口区 中山路 608号", trans: "🚕 택시 약 15분", tip: "💡 어린이 동반 필수 코스! 돌고래 및 벨루가 공연 시간 입장 직후 확인" },
-      { day: 3, title: "[13:00] 점심: 현지 유명 식당 / 만두전문점", addr: "沙河口区 中山路 608号", trans: "🚶 도보 이동", tip: "💡 아이가 먹을 안 매운 계란볶음밥(鸡蛋炒饭)과 꿔바로우 사전 주문" },
-      { day: 3, title: "[18:00] 저녁: 헤디우이즈셰 양꼬치 (喝丢一只鞋)", addr: "中山区 民主广场 附近", trans: "🚕 택시 약 20분", tip: "💡 양꼬치는 안 매운 맛(不辣) 요청. 꿔바로우가 바삭함" },
-      { day: 4, title: "[10:00] 대형마트 쇼핑 (대윤발 大润发)", addr: "中山区 胜利广场 附近", trans: "🚕 택시 약 10분", tip: "💡 해산물 스낵, 칭따오 맥주, 아이 간식류 구매" },
-      { day: 4, title: "[12:30] 다롄 저우수이쯔 공항 이동 및 귀국", addr: "甘井子区 迎客路 100号", trans: "🚕 택시 약 30분", tip: "💡 공항 내 유아 휴게실 이용 가능. 남은 위안화 현금 소진" }
+      // DAY 1
+      { day: 1, title: "[19:30] 🏨 동강 숙소 체크인", addr: "壹刻壹家酒店(大连东港店)", trans: "🚕 택시 | 약 10분 소요", tip: "💡 동강 지역 1박 숙소 도착 후 짐 정리" },
+      { day: 1, title: "[20:30] 🍗 저녁 식사: 喝丢一只鞋 (인민로점)", addr: "中山区 人民路 附近", trans: "🏃‍♂️ 도보 | 약 10~15분 소요", tip: "💡 꿔바로우, 양꼬치 주문 시 츠란 제거 요청! (不要孜然!)" },
+      { day: 1, title: "[21:30] 🌊 동방수성 (东方水城 / 베니스 수운하)", addr: "中山区 港浦路 3号", trans: "🚕 택시 | 약 5~10분 소요", tip: "💡 이국적인 야경 산책 후 동강 숙소 복귀 (1박)" },
+
+      // DAY 2
+      { day: 2, title: "[10:00] 🏨 인터컨티넨탈 호텔 이동 및 짐 보관", addr: "大连中远海运洲际酒店", trans: "🚕 택시 | 약 20~25분 소요", tip: "💡 연박 숙소에 미리 짐 보관 후 출발" },
+      { day: 2, title: "[10:30] 🐬 대련 성해해양세계 (圣亚海洋世界)", addr: "沙河口区 中山路 608号", trans: "🏃‍♂️ 도보 | 약 5분 소요", tip: "💡 11:00 돌고래 쇼(海豚湾之恋) 필수 관람! 118m 해저터널 감상" },
+      { day: 2, title: "[13:00] 🥟 점심 식사: 喜鼎海胆水饺 (성해湾1호점)", addr: "沙河口区 星海广场 附近", trans: "🚕 택시 약 5~10분 (또는 도보 15분)", tip: "💡 프리미엄 성게알 만두 & 아이용 새우 만두 추천" },
+      { day: 2, title: "[14:30] ☕ 감성 오션뷰 카페: Mangata Coffee (~17:00)", addr: "沙河口区 星海广场 滨海西路", trans: "🏃‍♂️ 도보 | 약 5~10분 소요", tip: "💡 성해광장 근처 뷰 맛집 카페에서 아이들과 여유로운 휴식" },
+      { day: 2, title: "[17:00] 🎡 성海광장 미니 놀이동산 & 갈매기 먹이주기 (~18:30)", addr: "沙河口区 星海广场", trans: "🏃‍♂️ 도보 / 택시 | 약 5분 소요", tip: "💡 선선해진 시간대 놀이기구(회전목마 등) 타기" },
+      { day: 2, title: "[18:30] 🦆 저녁 식사: 성해광장 인근 맛집 (新兴传承烤鸭 등)", addr: "沙河口区 星海广场 附近", trans: "🏃‍♂️ 도보 | 약 5분 소요", tip: "💡 베이징덕/오리고기 추천 맛집" },
+      { day: 2, title: "[19:30] 🍻🎪 성해광장 축제 & 야경 레이저쇼 (~21:00)", addr: "沙河口区 星海广场", trans: "🚕 택시 | 약 20~25분 소요", tip: "💡 맥주축제 분위기 즐기기 & 대형 음악분수 & 바다대교 레이저 쇼 감상 후 인터컨티넨탈 복귀 (2박)" },
+
+      // DAY 3
+      { day: 3, title: "[10:30] 🏘️ 동관거리 (东关街) 역사문화구역 산책", addr: "西岗区 繁荣街 附近", trans: "🏃‍♂️ 도보 | 동관거리 내 위치", tip: "💡 레트로 감성 고거리 산책 및 사진 촬영" },
+      { day: 3, title: "[11:30] 🍕 점심 식사: COMMUNE (공社 / 동관거리점)", addr: "西岗区 东关街 内", trans: "🚃 201번 빈티지 트램 탑승 | 약 15~20분 소요", tip: "💡 수제버거, 피자, 파스타, 음료 먹기" },
+      { day: 3, title: "[13:00] 🪆 러시아 풍정가 (大连·俄罗斯风情街) 산책", addr: "中山区 胜利桥北", trans: "🚕 택시 | 약 15~20분 소요", tip: "💡 러시아풍 건축물 및 스낵/기념품 거리 구경" },
+      { day: 3, title: "[14:30] 🛒 서안로 중앙대도 (中央大道) 상권 원스톱", addr: "沙河口区 西安路 139号", trans: "🏃‍♂️ 실내 연결통로 도보 | 약 5분 소요", tip: "💡 엄마: 서안로 네일아트 샵(美甲) / 아빠+아이: 미니소, 대형마트 과자 쇼핑, 실내 키즈존&카페" },
+      { day: 3, title: "[18:00] 🍢 저녁 식사: 长兴里小吃街 西安路夜市 (야시장)", addr: "沙河口区 西安路", trans: "🚕 택시 | 약 15~20분 소요", tip: "💡 탕후루, 철판 오징어, 길거리 음식 골목 탐방 후 인터컨티넨탈 복귀 (3박)" },
+
+      // DAY 4
+      { day: 4, title: "[10:00] 🏨 인터컨티넨탈 체크아웃 (모든 짐 지참)", addr: "大连中远海运洲际酒店", trans: "🚕 택시 | 약 25~30분 소요", tip: "💡 체크아웃 후 전 가방 챙겨 고라리조트로 이동" },
+      { day: 4, title: "[10:30] ♨️ 고라리조트 (高罗温泉)", addr: "甘井子区 温泉度假区", trans: "🚕 택시 | 약 15~20분 소요", tip: "💡 카운터 캐리어 짐 보관, 실내외 온천사우나 & 키즈 물놀이, 리조트 내 점심 식사 & 샤워" },
+      { day: 4, title: "[16:30] ✈️ 대련 주수자 국제공항 도착 및 출국 수속", addr: "大连周水子国际机场", trans: "✈️ 출국 수속", tip: "💡 공항 도착 후 출국 수속 진행 및 여행 마무리" }
+    ];
+
+    const initialPlaces = [
+      { title: "喝丢一只鞋 (인민로점)", cat: "맛집", addr: "中山区 人民路 附近", tip: "💡 양꼬치 주문 시 츠란 빼달라고 꼭 요청! (不要孜然 / 부야오쯔란). 꿔바로우 바삭하고 맛있음." },
+      { title: "喜鼎海胆水饺 (성해湾1호점)", cat: "맛집", addr: "沙河口区 星海广场 附近", tip: "💡 성게알 만두(海胆水饺) 강추. 아이용으로 안 매운 새우만두(虾仁水饺) 주문하기." },
+      { title: "Mangata Coffee", cat: "카페", addr: "沙河口区 星海广场 滨海西路", tip: "💡 성해바다대교 뷰 맛집 감성 카페. 창가 자리 인기가 많으며 아이 음료 판매." },
+      { title: "COMMUNE (공社 동관거리점)", cat: "맛집", addr: "西岗区 东关街 内", tip: "💡 분위기 좋은 수제버거 & 피자 맛집. 아이들도 먹기 편한 메뉴 구성." },
+      { title: "고라리조트 (高罗温泉)", cat: "온천/명소", addr: "甘井子区 温泉度假区", tip: "💡 실내외 온천 & 키즈 전용 풀장 완비. 카운터에서 캐리어 무료 보관 서비스 가능." },
+      { title: "서안로 중앙대도 (Central Avenue)", cat: "쇼핑", addr: "沙河口区 西安路 139号", tip: "💡 대형 쇼핑몰. 네일샵, 미니소, 키즈카페, 대형마트가 한 건물/연결통로에 집중되어 완벽 원스톱." }
+    ];
+
+    const initialSpeech = [
+      { kor: "쯔란(향신료) 넣지 마세요", cn: "不要孜然", py: "Bú yào zīrán (부야오 쯔란)", tip: "양꼬치 주문 시 필수" },
+      { kor: "고수 넣지 마세요", cn: "不要香菜", py: "Bú yào xiāngcài (부야오 샹차이)", tip: "모든 음식 주문 시" },
+      { kor: "안 매운 것으로 주세요", cn: "要不辣", py: "Yào bù là (야오 부 라)", tip: "아이들 음식 주문 시" },
+      { kor: "영수증 부탁합니다", cn: "请给我发票", py: "Qǐng gěi wǒ fāpiào (칭 게이 워 파피아오)", tip: "결제 후 요청 시" },
+      { kor: "고덕지도 주소 보여주기", cn: "请带我去这个地方", py: "Qǐng dài wǒ qù zhè ge dìfāng (칭 다이 워 취 저거 디팡)", tip: "택시 기사님께 주소 보여줄 때" },
+      { kor: "짐 보관할 수 있나요?", cn: "可以寄存行李吗？", py: "Kěyǐ jìcún xíngli ma? (커이 지춘 싱리 마?)", tip: "호텔/리조트 카운터에서" }
     ];
 
     let currentSchedules = {};
+    let currentPlaces = {};
+    let currentSpeech = {};
+    let currentModalType = 'schedule';
     let editKey = null;
 
-    // Firebase DB 연결 및 자동 채우기 로직
+    // 🔥 Firebase DB 실시간 수신
     db.ref("schedules").on("value", (snapshot) => {
       const data = snapshot.val();
-      
-      // DB가 최초로 비어있을 때 딱 1번만 기본 일정을 자동으로 밀어 넣어줍니다!
-      if (!data && !localStorage.getItem("db_initialized")) {
-        localStorage.setItem("db_initialized", "true");
+      if (!data) {
         initialSchedules.forEach(item => db.ref("schedules").push(item));
         return;
       }
-
-      currentSchedules = data || {};
+      currentSchedules = data;
       renderSchedules();
     });
 
+    db.ref("places").on("value", (snapshot) => {
+      const data = snapshot.val();
+      if (!data) {
+        initialPlaces.forEach(item => db.ref("places").push(item));
+        return;
+      }
+      currentPlaces = data;
+      renderPlaces();
+    });
+
+    db.ref("speech").on("value", (snapshot) => {
+      const data = snapshot.val();
+      if (!data) {
+        initialSpeech.forEach(item => db.ref("speech").push(item));
+        return;
+      }
+      currentSpeech = data;
+      renderSpeech();
+    });
+
+    // 🔄 기본 데이터 전체 복구 기능
+    function resetToInitialData() {
+      if (confirm("정말로 모든 일정을 초기 작성해 둔 기본 일정(1~4일차)으로 복구하시겠습니까?\n(직접 수정하시거나 추가한 일정은 삭제됩니다.)")) {
+        db.ref("schedules").remove().then(() => {
+          initialSchedules.forEach(item => db.ref("schedules").push(item));
+        });
+        db.ref("places").remove().then(() => {
+          initialPlaces.forEach(item => db.ref("places").push(item));
+        });
+        db.ref("speech").remove().then(() => {
+          initialSpeech.forEach(item => db.ref("speech").push(item));
+        });
+        alert("기본 데이터로 복구되었습니다!");
+      }
+    }
+
+    // 탭 전환
     function switchTab(type) {
       ['schedule', 'places', 'speech'].forEach(t => {
         document.getElementById(`sec-${t}`).classList.add('hidden');
@@ -186,12 +293,13 @@
       document.getElementById(`tab-${type}`).classList.remove('text-slate-500');
     }
 
+    // 1. 일정 렌더링
     function renderSchedules() {
       const container = document.getElementById('schedule-list');
       container.innerHTML = '';
 
       if (Object.keys(currentSchedules).length === 0) {
-        container.innerHTML = `<div class="text-center py-10 text-slate-400 text-sm">등록된 일정이 없습니다.<br>'+ 일정 추가' 버튼을 눌러 추가해보세요!</div>`;
+        container.innerHTML = `<div class="text-center py-10 text-slate-400 text-sm">일정이 없습니다.</div>`;
         return;
       }
 
@@ -205,7 +313,7 @@
           currentDay = item.day;
           const dayHeader = document.createElement('div');
           dayHeader.className = 'font-bold text-indigo-600 border-b border-indigo-200 pb-1 mt-6 mb-3 flex items-center gap-1';
-          dayHeader.innerHTML = `<i class="fa-solid fa-plane-departure text-sm"></i> ${currentDay}일차`;
+          dayHeader.innerHTML = `<i class="fa-solid fa-plane-departure text-sm"></i> DAY ${currentDay}`;
           container.appendChild(dayHeader);
         }
 
@@ -217,9 +325,9 @@
         card.innerHTML = `
           <div class="flex justify-between items-start gap-2">
             <h3 class="font-bold text-slate-800 text-sm">${item.title || ''}</h3>
-            <div class="flex gap-1 text-slate-400 text-xs">
-              <button onclick="editSchedule('${key}')" class="p-1 hover:text-indigo-600"><i class="fa-solid fa-pen"></i></button>
-              <button onclick="deleteData('${key}')" class="p-1 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>
+            <div class="flex gap-1 text-slate-400 text-xs shrink-0">
+              <button onclick="editItem('schedule', '${key}')" class="p-1 hover:text-indigo-600"><i class="fa-solid fa-pen"></i></button>
+              <button onclick="deleteData('schedules', '${key}')" class="p-1 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>
             </div>
           </div>
           ${item.addr ? `<p class="text-xs text-slate-500 flex items-center gap-1"><i class="fa-solid fa-location-dot text-slate-400"></i> ${item.addr}</p>` : ''}
@@ -231,53 +339,149 @@
       });
     }
 
-    function deleteData(key) {
-      if (confirm("이 일정을 삭제하시겠습니까?")) {
-        db.ref(`schedules/${key}`).remove();
+    // 2. 장소 렌더링
+    function renderPlaces() {
+      const container = document.getElementById('places-list');
+      container.innerHTML = '';
+
+      Object.keys(currentPlaces).forEach(key => {
+        const item = currentPlaces[key];
+        const card = document.createElement('div');
+        card.className = 'bg-white p-4 rounded-xl border border-slate-100 shadow-sm space-y-2';
+        const mapUrl = item.addr ? `https://uri.amap.com/search?keyword=${encodeURIComponent(item.addr)}` : '#';
+
+        card.innerHTML = `
+          <div class="flex justify-between items-start gap-2">
+            <div>
+              <span class="text-[10px] bg-indigo-50 text-indigo-600 font-semibold px-2 py-0.5 rounded">${item.cat || '장소'}</span>
+              <h3 class="font-bold text-slate-800 text-sm mt-1">${item.title || ''}</h3>
+            </div>
+            <div class="flex gap-1 text-slate-400 text-xs">
+              <button onclick="editItem('place', '${key}')" class="p-1 hover:text-indigo-600"><i class="fa-solid fa-pen"></i></button>
+              <button onclick="deleteData('places', '${key}')" class="p-1 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>
+          ${item.addr ? `<p class="text-xs text-slate-500"><i class="fa-solid fa-location-dot text-slate-400 mr-1"></i>${item.addr}</p>` : ''}
+          ${item.tip ? `<div class="bg-amber-50 text-amber-800 text-xs p-2 rounded flex items-start gap-1.5"><i class="fa-regular fa-lightbulb text-amber-500 mt-0.5"></i> <div>${item.tip}</div></div>` : ''}
+          ${item.addr ? `<div class="text-right pt-1"><a href="${mapUrl}" target="_blank" class="inline-flex items-center gap-1 text-[11px] bg-sky-50 text-sky-600 px-2.5 py-1 rounded-full hover:bg-sky-100 font-medium"><i class="fa-solid fa-map"></i> 고덕지도 연결</a></div>` : ''}
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // 3. 회화 렌더링
+    function renderSpeech() {
+      const container = document.getElementById('speech-list');
+      container.innerHTML = '';
+
+      Object.keys(currentSpeech).forEach(key => {
+        const item = currentSpeech[key];
+        const card = document.createElement('div');
+        card.className = 'bg-white p-4 rounded-xl border border-slate-100 shadow-sm space-y-1.5';
+
+        card.innerHTML = `
+          <div class="flex justify-between items-start">
+            <span class="text-[10px] bg-emerald-50 text-emerald-600 font-semibold px-2 py-0.5 rounded">${item.tip || '회화'}</span>
+            <div class="flex gap-1 text-slate-400 text-xs">
+              <button onclick="editItem('speech', '${key}')" class="p-1 hover:text-indigo-600"><i class="fa-solid fa-pen"></i></button>
+              <button onclick="deleteData('speech', '${key}')" class="p-1 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>
+          <div class="font-bold text-slate-800 text-sm">${item.kor || ''}</div>
+          <div class="text-indigo-600 font-bold text-base">${item.cn || ''}</div>
+          <div class="text-xs text-slate-500">${item.py || ''}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // 삭제
+    function deleteData(path, key) {
+      if (confirm("이 항목을 삭제하시겠습니까?")) {
+        db.ref(`${path}/${key}`).remove();
       }
     }
 
-    function openModal() {
+    // 모달 열기
+    function openModal(type) {
+      currentModalType = type;
       editKey = null;
-      document.getElementById('form-schedule').reset();
+      
+      ['schedule', 'place', 'speech'].forEach(t => {
+        document.getElementById(`form-${t}`).classList.add('hidden');
+        document.getElementById(`form-${t}`).reset();
+      });
+
+      document.getElementById(`form-${type}`).classList.remove('hidden');
       document.getElementById('modal').classList.remove('hidden');
     }
 
+    // 모달 닫기 / 수정 취소
     function closeModal() {
       document.getElementById('modal').classList.add('hidden');
     }
 
-    function editSchedule(key) {
-      const item = currentSchedules[key];
-      if (!item) return;
-      openModal();
+    // 수정 모달
+    function editItem(type, key) {
       editKey = key;
-      document.getElementById('sc-day').value = item.day || 1;
-      document.getElementById('sc-title').value = item.title || '';
-      document.getElementById('sc-addr').value = item.addr || '';
-      document.getElementById('sc-trans').value = item.trans || '';
-      document.getElementById('sc-tip').value = item.tip || '';
+      openModal(type);
+
+      if (type === 'schedule') {
+        const item = currentSchedules[key];
+        document.getElementById('sc-day').value = item.day || 1;
+        document.getElementById('sc-title').value = item.title || '';
+        document.getElementById('sc-addr').value = item.addr || '';
+        document.getElementById('sc-trans').value = item.trans || '';
+        document.getElementById('sc-tip').value = item.tip || '';
+      } else if (type === 'place') {
+        const item = currentPlaces[key];
+        document.getElementById('pl-title').value = item.title || '';
+        document.getElementById('pl-cat').value = item.cat || '';
+        document.getElementById('pl-addr').value = item.addr || '';
+        document.getElementById('pl-tip').value = item.tip || '';
+      } else if (type === 'speech') {
+        const item = currentSpeech[key];
+        document.getElementById('sp-kor').value = item.kor || '';
+        document.getElementById('sp-cn').value = item.cn || '';
+        document.getElementById('sp-py').value = item.py || '';
+        document.getElementById('sp-tip').value = item.tip || '';
+      }
     }
 
+    // 저장
     function saveData() {
-      const payload = {
-        day: parseInt(document.getElementById('sc-day').value) || 1,
-        title: document.getElementById('sc-title').value.trim(),
-        addr: document.getElementById('sc-addr').value.trim(),
-        trans: document.getElementById('sc-trans').value.trim(),
-        tip: document.getElementById('sc-tip').value.trim()
-      };
+      if (currentModalType === 'schedule') {
+        const payload = {
+          day: parseInt(document.getElementById('sc-day').value) || 1,
+          title: document.getElementById('sc-title').value.trim(),
+          addr: document.getElementById('sc-addr').value.trim(),
+          trans: document.getElementById('sc-trans').value.trim(),
+          tip: document.getElementById('sc-tip').value.trim()
+        };
+        if (editKey) db.ref(`schedules/${editKey}`).update(payload);
+        else db.ref('schedules').push(payload);
 
-      if (!payload.title) {
-        alert("제목을 입력해주세요!");
-        return;
+      } else if (currentModalType === 'place') {
+        const payload = {
+          title: document.getElementById('pl-title').value.trim(),
+          cat: document.getElementById('pl-cat').value.trim(),
+          addr: document.getElementById('pl-addr').value.trim(),
+          tip: document.getElementById('pl-tip').value.trim()
+        };
+        if (editKey) db.ref(`places/${editKey}`).update(payload);
+        else db.ref('places').push(payload);
+
+      } else if (currentModalType === 'speech') {
+        const payload = {
+          kor: document.getElementById('sp-kor').value.trim(),
+          cn: document.getElementById('sp-cn').value.trim(),
+          py: document.getElementById('sp-py').value.trim(),
+          tip: document.getElementById('sp-tip').value.trim()
+        };
+        if (editKey) db.ref(`speech/${editKey}`).update(payload);
+        else db.ref('speech').push(payload);
       }
 
-      if (editKey) {
-        db.ref(`schedules/${editKey}`).update(payload);
-      } else {
-        db.ref('schedules').push(payload);
-      }
       closeModal();
     }
   </script>
