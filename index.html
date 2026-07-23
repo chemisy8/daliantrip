@@ -4,11 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>다롄 가족 여행 가이드 & 일정</title>
-  <!-- TailWind CSS & FontAwesome Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- Firebase SDK (v9 Compat) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
@@ -19,7 +17,6 @@
 </head>
 <body class="bg-indigo-50/40 min-h-screen flex flex-col">
 
-  <!-- Header -->
   <header class="bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-500 text-white p-4 sticky top-0 z-50 shadow-lg">
     <div class="max-w-md mx-auto flex justify-between items-center">
       <h1 class="text-xl font-black tracking-tight flex items-center gap-2">
@@ -33,7 +30,6 @@
     </div>
   </header>
 
-  <!-- Navigation Tabs -->
   <div class="bg-white/80 backdrop-blur-md shadow-sm sticky top-[60px] z-40 border-b border-indigo-100">
     <div class="max-w-md mx-auto flex">
       <button id="tab-schedule-btn" onclick="switchTab('schedule')" class="flex-1 py-3 text-center text-gray-500 text-sm font-medium tab-active transition-all">
@@ -48,10 +44,8 @@
     </div>
   </div>
 
-  <!-- Main Content -->
   <main class="max-w-md mx-auto p-4 flex-1 w-full space-y-4">
 
-    <!-- TAB 0: SCHEDULE -->
     <section id="tab-schedule" class="space-y-4">
       <div class="flex justify-between items-center px-1">
         <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
@@ -68,11 +62,9 @@
       </div>
 
       <div id="schedule-container" class="space-y-4">
-        <!-- Dynamic Schedule Cards -->
-      </div>
+        </div>
     </section>
 
-    <!-- TAB 1: PLACES -->
     <section id="tab-places" class="space-y-4 hidden">
       <div class="flex justify-between items-center px-1">
         <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
@@ -84,11 +76,9 @@
       </div>
 
       <div id="places-container" class="space-y-3">
-        <!-- Dynamic Cards -->
-      </div>
+        </div>
     </section>
 
-    <!-- TAB 2: SPEECH -->
     <section id="tab-speech" class="space-y-4 hidden">
       <div class="flex justify-between items-center px-1">
         <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
@@ -100,13 +90,11 @@
       </div>
 
       <div id="speech-container" class="space-y-3">
-        <!-- Dynamic Cards -->
-      </div>
+        </div>
     </section>
 
   </main>
 
-  <!-- ADD / EDIT MODAL -->
   <div id="modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs hidden flex items-center justify-center z-50 p-4">
     <div class="bg-white rounded-2xl max-w-md w-full p-5 space-y-4 shadow-2xl border border-indigo-50">
       <h3 id="modal-title" class="text-lg font-bold text-gray-800 flex items-center gap-2">
@@ -117,7 +105,6 @@
         <input type="hidden" id="modal-type">
         <input type="hidden" id="modal-edit-id">
         
-        <!-- Fields for Schedule -->
         <div id="field-sched-day" class="space-y-1">
           <label class="text-xs font-bold text-gray-600">일차 (DAY)</label>
           <select id="input-sched-day" class="w-full border border-gray-200 rounded-xl p-2.5 text-sm bg-gray-50">
@@ -132,7 +119,7 @@
           <input type="text" id="input-sched-title" placeholder="예: [14:00] 성해광장 (星海广场)" class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:outline-indigo-500">
         </div>
         <div id="field-sched-addr" class="space-y-1">
-          <label class="text-xs font-bold text-gray-600">주소 / 한자 주소</label>
+          <label class="text-xs font-bold text-gray-600">주소 / 한자 주소 (고덕지도 검색용)</label>
           <input type="text" id="input-sched-addr" placeholder="예: 沙河口区 中山路 572号" class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:outline-indigo-500">
         </div>
         <div id="field-sched-trans" class="space-y-1">
@@ -144,7 +131,6 @@
           <textarea id="input-sched-desc" rows="2" placeholder="예: 바닷바람 강함. 아이 겉옷 필수!" class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:outline-indigo-500"></textarea>
         </div>
 
-        <!-- Fields for Place -->
         <div id="field-place-name" class="space-y-1 hidden">
           <label class="text-xs font-bold text-gray-600">장소명 / 한자명</label>
           <input type="text" id="input-place-title" placeholder="예: 喝丢一只鞋 (헤디우이즈셰)" class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:outline-indigo-500">
@@ -154,7 +140,6 @@
           <textarea id="input-place-desc" rows="3" placeholder="예: 꿔바로우 바삭하게 요청, 아이용 계란볶음밥 추천" class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:outline-indigo-500"></textarea>
         </div>
 
-        <!-- Fields for Speech -->
         <div id="field-speech-kr" class="space-y-1 hidden relative">
           <label class="text-xs font-bold text-gray-600 flex justify-between">
             <span>한국어 의미</span>
@@ -162,7 +147,6 @@
           </label>
           <input type="text" id="input-speech-kr" oninput="onSpeechKrInput(this.value)" placeholder="예: 물, 고수, 얼마, 택시, 영수증..." class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:outline-indigo-500" autocomplete="off">
           
-          <!-- Auto-complete Dropdown List -->
           <div id="speech-autocomplete" class="hidden absolute left-0 right-0 top-[65px] bg-white border border-indigo-100 rounded-xl shadow-lg z-50 max-h-40 overflow-y-auto divide-y divide-gray-50"></div>
         </div>
         <div id="field-speech-cn" class="space-y-1 hidden">
@@ -182,7 +166,6 @@
     </div>
   </div>
 
-  <!-- Footer with sun0 Copyright -->
   <footer class="bg-white border-t border-indigo-100 py-6 mt-8">
     <div class="max-w-md mx-auto text-center space-y-2">
       <div class="flex items-center justify-center gap-1.5 text-xs text-indigo-400 font-medium">
@@ -237,14 +220,14 @@
     // 새 상세 일정 데이터 (시간대, 주소, 택시/도보, 블로그 팁 포함)
     const newSchedules = [
       { day: "1일차", title: "[12:30] 다롄 저우수이쯔 국제공항 (大连周水子国际机场)", addr: "甘井子区 迎客路 100号", trans: "✈️ 한국 출발 후 도착 / 입국 수속", desc: "💡 [꿀팁] 입국 심사 시 가족 단체 라인 활용, 디디(DiDi) 앱으로 호출 시 공항 P2 주차장에서 승차" },
-      { day: "1일차", title: "[14:00] 숙소 체크인 및 짐 보관", addr: "성해광장 근처 (沙河口区 中山路)", trans: "🚕 택시 약 25~30분 (약 35~40元)", desc: "💡 [꿀팁] 아이 컨디션 조절을 위해 체크인 후 30분 휴식 권장" },
+      { day: "1일차", title: "[14:00] 숙소 체크인 및 짐 보관", addr: "沙河口区 中山路 572号", trans: "🚕 택시 약 25~30분 (약 35~40元)", desc: "💡 [꿀팁] 아이 컨디션 조절을 위해 체크인 후 30분 휴식 권장" },
       { day: "1일차", title: "[16:30] 성해광장 (星海广场)", addr: "沙河口区 中山路 572号", trans: "🚶 도보 이동 (또는 택시 5분)", desc: "💡 [꿀팁] 아시아 최대 광장! 갈매기 모이주기 체험 인기. 바닷바람이 강해 유아용 바람막이 겉옷 필수" },
       { day: "1일차", title: "[18:30] 저녁: Mangata Coffee & 레스토랑", addr: "沙河口区 星海广场 滨海西路", trans: "🚶 광장 내 도보 5분", desc: "💡 [꿀팁] 2층 테라스 창가석이 성해대교(星海湾大桥) 야경 뷰 명당! 아이용 감자튀김/파스타 판매" },
       { day: "2일차", title: "[10:00] 성해공원 (星海公园)", addr: "沙河口区 中山路 634号", trans: "🚕 택시 약 10분 (기본요금 수준)", desc: "💡 [꿀팁] 해안 산책로가 평탄하여 유모차 이동 매우 편리. 소형 놀이기구 구역 유아 맞춤" },
       { day: "2일차", title: "[12:30] 점심: 시딩 성게알 만두 (喜鼎海胆水饺)", addr: "中山区 中山路 108号 (파빌리온 Mall)", trans: "🚕 택시 약 20분", desc: "💡 [꿀팁] 웨이팅이 길어 12시 이전 방문 필수! 아이용으로 자극적이지 않은 삼선수교(새우계란) 강력 추천" },
       { day: "2일차", title: "[15:00] 동방수성 (东方水城 - 베네치아 운하 마을)", addr: "中山区 港浦路 3号", trans: "🚕 택시 약 15분", desc: "💡 [꿀팁] 곤돌라 배 탑승 체험 인기(인당 약 60元). 오후 3~4시 사이 햇살이 예뻐 가족사진 명소" },
       { day: "3일차", title: "[09:30] 다롄 성해 해양성공원 / 수족관 (圣亚海洋世界)", addr: "沙河口区 中山路 608号", trans: "🚕 택시 약 15분", desc: "💡 [꿀팁] 어린이 동반 필수 코스! 돌고래 및 흰돌고래(벨루가) 공연 시간 입장 직후 모바일로 먼저 확인" },
-      { day: "3일차", title: "[13:00] 점심: 현지 유명 식당 / 만두전문점", addr: "수족관 인근 식당가", trans: "🚶 도보 이동", desc: "💡 [꿀팁] 아이가 먹을 안 매운 계란볶음밥(鸡蛋炒饭)과 꿔바로우 사전 주문" },
+      { day: "3일차", title: "[13:00] 점심: 현지 유명 식당 / 만두전문점", addr: "沙河口区 中山路 608号", trans: "🚶 도보 이동", desc: "💡 [꿀팁] 아이가 먹을 안 매운 계란볶음밥(鸡蛋炒饭)과 꿔바로우 사전 주문" },
       { day: "3일차", title: "[18:00] 저녁: 헤디우이즈셰 양꼬치 (喝丢一只鞋)", addr: "中山区 民主广场 附近", trans: "🚕 택시 약 20분", desc: "💡 [꿀팁] 양꼬치는 안 매운 맛(不辣) 요청. 꿔바로우가 바삭해서 아이들이 매우 잘 먹음" },
       { day: "4일차", title: "[10:00] 대형마트 쇼핑 (월마트/대윤발 大润发)", addr: "中山区 胜利广场 附近", trans: "🚕 택시 약 10분", desc: "💡 [꿀팁] 해산물 스낵, 칭따오 맥주, 아이 간식류 구매. 500元 이상 구매 시 귀국 짐 공간 체크" },
       { day: "4일차", title: "[12:30] 다롄 저우수이쯔 공항 이동 및 귀국", addr: "甘井子区 迎客路 100号", trans: "🚕 택시 약 30분 (출발 2시간 30분 전 도착)", desc: "💡 [꿀팁] 공항 내 유아 휴게실 이용 가능. 남은 위안화 현금 소진" }
@@ -278,7 +261,14 @@
     let currentPlaces = {};
     let currentSpeech = {};
 
-    // 데이터 수신 및 자동으로 구버전 데이터 업데이트
+    // 고덕지도 키워드 정제 함수 (주소나 제목에서 적절한 한자 검색어 추출)
+    function getAmapUrl(item) {
+      let query = item.addr || item.title || item.name || '';
+      // 괄호 안에 있는 한자나 주소 위주로 매칭 확률 증대
+      return `https://uri.amap.com/search?keyword=${encodeURIComponent(query)}`;
+    }
+
+    // Firebase 데이터 수신 및 실시간 반영
     db.ref("schedules").on("value", (snapshot) => {
       const data = snapshot.val();
       if (!data) {
@@ -286,7 +276,6 @@
         return;
       }
       
-      // 구버전(주소 데이터 없음) 데이터 검출 시 강제 최신 데이터로 업그레이드
       const hasOldVersion = Object.values(data).some(item => !item.addr);
       if (hasOldVersion) {
         db.ref("schedules").remove().then(() => {
@@ -348,6 +337,8 @@
           itemsHtml = `<p class="text-xs text-gray-400 py-2 italic text-center">등록된 일정이 없습니다.</p>`;
         } else {
           dayItems.forEach(item => {
+            const amapUrl = getAmapUrl(item);
+
             itemsHtml += `
               <div class="bg-gray-50/90 p-3.5 rounded-xl border border-gray-100 space-y-1.5 hover:bg-gray-100/80 transition">
                 <div class="flex justify-between items-start">
@@ -376,6 +367,12 @@
                     ${item.desc}
                   </div>
                 ` : ''}
+
+                <div class="pt-1.5 flex justify-end">
+                  <a href="${amapUrl}" target="_blank" class="inline-flex items-center text-[10px] bg-blue-50 text-blue-600 px-2.5 py-1 rounded-full font-medium hover:bg-blue-100 transition">
+                    <i class="fa-solid fa-map-location-dot mr-1"></i> 고덕지도 연결
+                  </a>
+                </div>
               </div>
             `;
           });
