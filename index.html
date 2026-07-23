@@ -1,1 +1,314 @@
-<html><head><meta content="text/html; charset=UTF-8" http-equiv="content-type"><style type="text/css">ol{margin:0;padding:0}table td,table th{padding:0}.c3{color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:"Courier";font-style:normal}.c4{color:#000000;font-weight:400;text-decoration:none;vertical-align:baseline;font-size:11pt;font-family:"Arial";font-style:normal}.c0{padding-top:0pt;padding-bottom:0pt;line-height:1.0;text-align:left}.c2{background-color:#ffffff;max-width:468pt;padding:72pt 72pt 72pt 72pt}.c1{height:11pt}.title{padding-top:24pt;color:#000000;font-weight:700;font-size:36pt;padding-bottom:6pt;font-family:"Arial";line-height:1.0;page-break-after:avoid;text-align:left}.subtitle{padding-top:18pt;color:#666666;font-size:24pt;padding-bottom:4pt;font-family:"Georgia";line-height:1.0;page-break-after:avoid;font-style:italic;text-align:left}li{color:#000000;font-size:11pt;font-family:"Arial"}p{margin:0;color:#000000;font-size:11pt;font-family:"Arial"}h1{padding-top:12pt;color:#000000;font-weight:700;font-size:24pt;padding-bottom:12pt;font-family:"Arial";line-height:1.0;text-align:left}h2{padding-top:11.2pt;color:#000000;font-weight:700;font-size:18pt;padding-bottom:11.2pt;font-family:"Arial";line-height:1.0;text-align:left}h3{padding-top:12pt;color:#000000;font-weight:700;font-size:14pt;padding-bottom:12pt;font-family:"Arial";line-height:1.0;text-align:left}h4{padding-top:12.8pt;color:#000000;font-weight:700;font-size:12pt;padding-bottom:12.8pt;font-family:"Arial";line-height:1.0;text-align:left}h5{padding-top:12.8pt;color:#000000;font-weight:700;font-size:9pt;padding-bottom:12.8pt;font-family:"Arial";line-height:1.0;text-align:left}h6{padding-top:18pt;color:#000000;font-weight:700;font-size:8pt;padding-bottom:18pt;font-family:"Arial";line-height:1.0;text-align:left}</style></head><body class="c2 doc-content"><p class="c0 c1"><span class="c4"></span></p><p class="c0"><span class="c3">&lt;!DOCTYPE html&gt;<br>&lt;html lang=&quot;ko&quot;&gt;<br>&lt;head&gt;<br> &nbsp;&lt;meta charset=&quot;UTF-8&quot;&gt;<br> &nbsp;&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;<br> &nbsp;&lt;title&gt;&#45796;&#47172; &#44032;&#51313; &#50668;&#54665; &#44032;&#51060;&#46300; &amp; &#54924;&#54868;&lt;/title&gt;<br> &nbsp;&lt;!-- TailWind CSS &amp; FontAwesome Icons --&gt;<br> &nbsp;&lt;script src=&quot;https://cdn.tailwindcss.com&quot;&gt;&lt;/script&gt;<br> &nbsp;&lt;link rel=&quot;stylesheet&quot; href=&quot;https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css&quot;&gt;<br> &nbsp;<br> &nbsp;&lt;!-- Firebase SDK (v9 Compat) --&gt;<br> &nbsp;&lt;script src=&quot;https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js&quot;&gt;&lt;/script&gt;<br> &nbsp;&lt;script src=&quot;https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js&quot;&gt;&lt;/script&gt;<br><br> &nbsp;&lt;style&gt;<br> &nbsp; &nbsp;body { font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, sans-serif; }<br> &nbsp; &nbsp;.tab-active { border-bottom: 2px solid #4F46E5; color: #4F46E5; font-weight: bold; }<br> &nbsp;&lt;/style&gt;<br>&lt;/head&gt;<br>&lt;body class=&quot;bg-gray-100 min-h-screen pb-12&quot;&gt;<br><br> &nbsp;&lt;!-- Header --&gt;<br> &nbsp;&lt;header class=&quot;bg-indigo-600 text-white p-4 sticky top-0 z-50 shadow-md&quot;&gt;<br> &nbsp; &nbsp;&lt;div class=&quot;max-w-md mx-auto flex justify-between items-center&quot;&gt;<br> &nbsp; &nbsp; &nbsp;&lt;h1 class=&quot;text-xl font-bold&quot;&gt;&lt;i class=&quot;fa-solid fa-plane-departure mr-2&quot;&gt;&lt;/i&gt;&#45796;&#47172; &#50668;&#54665; &#44032;&#51060;&#46300;&lt;/h1&gt;<br> &nbsp; &nbsp; &nbsp;&lt;span class=&quot;text-xs bg-indigo-800 px-2 py-1 rounded flex items-center gap-1&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp;&lt;span class=&quot;w-2 h-2 bg-green-400 rounded-full animate-pulse&quot;&gt;&lt;/span&gt; &#49892;&#49884;&#44036; &#46041;&#44592;&#54868;<br> &nbsp; &nbsp; &nbsp;&lt;/span&gt;<br> &nbsp; &nbsp;&lt;/div&gt;<br> &nbsp;&lt;/header&gt;<br><br> &nbsp;&lt;!-- Navigation Tabs --&gt;<br> &nbsp;&lt;div class=&quot;bg-white shadow-sm sticky top-[57px] z-40&quot;&gt;<br> &nbsp; &nbsp;&lt;div class=&quot;max-w-md mx-auto flex border-b&quot;&gt;<br> &nbsp; &nbsp; &nbsp;&lt;button id=&quot;tab-places-btn&quot; onclick=&quot;switchTab(&#39;places&#39;)&quot; class=&quot;flex-1 py-3 text-center text-gray-600 tab-active&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp;&lt;i class=&quot;fa-solid fa-location-dot mr-1&quot;&gt;&lt;/i&gt; &#51109;&#49548; &amp; &#44992;&#54017;<br> &nbsp; &nbsp; &nbsp;&lt;/button&gt;<br> &nbsp; &nbsp; &nbsp;&lt;button id=&quot;tab-speech-btn&quot; onclick=&quot;switchTab(&#39;speech&#39;)&quot; class=&quot;flex-1 py-3 text-center text-gray-600&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp;&lt;i class=&quot;fa-solid fa-comments mr-1&quot;&gt;&lt;/i&gt; &#49373;&#51316; &#51473;&#44397;&#50612;<br> &nbsp; &nbsp; &nbsp;&lt;/button&gt;<br> &nbsp; &nbsp;&lt;/div&gt;<br> &nbsp;&lt;/div&gt;<br><br> &nbsp;&lt;main class=&quot;max-w-md mx-auto p-4&quot;&gt;<br><br> &nbsp; &nbsp;&lt;!-- TAB 1: PLACES --&gt;<br> &nbsp; &nbsp;&lt;section id=&quot;tab-places&quot; class=&quot;space-y-4&quot;&gt;<br> &nbsp; &nbsp; &nbsp;&lt;div class=&quot;flex justify-between items-center mb-2&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp;&lt;h2 class=&quot;text-lg font-bold text-gray-800&quot;&gt;&#52628;&#52380; &#47579;&#51665;/&#44288;&#44305;&#51648;&lt;/h2&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp;&lt;button onclick=&quot;openModal(&#39;place&#39;)&quot; class=&quot;bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-indigo-700&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;i class=&quot;fa-solid fa-plus mr-1&quot;&gt;&lt;/i&gt; &#51109;&#49548; &#52628;&#44032;<br> &nbsp; &nbsp; &nbsp; &nbsp;&lt;/button&gt;<br> &nbsp; &nbsp; &nbsp;&lt;/div&gt;<br><br> &nbsp; &nbsp; &nbsp;&lt;div id=&quot;places-container&quot; class=&quot;space-y-3&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp;&lt;!-- Dynamic Cards --&gt;<br> &nbsp; &nbsp; &nbsp;&lt;/div&gt;<br> &nbsp; &nbsp;&lt;/section&gt;<br><br> &nbsp; &nbsp;&lt;!-- TAB 2: SPEECH --&gt;<br> &nbsp; &nbsp;&lt;section id=&quot;tab-speech&quot; class=&quot;space-y-4 hidden&quot;&gt;<br> &nbsp; &nbsp; &nbsp;&lt;div class=&quot;flex justify-between items-center mb-2&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp;&lt;h2 class=&quot;text-lg font-bold text-gray-800&quot;&gt;&#54788;&#51648; &#51473;&#44397;&#50612; &#54924;&#54868;&lt;/h2&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp;&lt;button onclick=&quot;openModal(&#39;speech&#39;)&quot; class=&quot;bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-indigo-700&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;i class=&quot;fa-solid fa-plus mr-1&quot;&gt;&lt;/i&gt; &#54924;&#54868; &#52628;&#44032;<br> &nbsp; &nbsp; &nbsp; &nbsp;&lt;/button&gt;<br> &nbsp; &nbsp; &nbsp;&lt;/div&gt;<br><br> &nbsp; &nbsp; &nbsp;&lt;div id=&quot;speech-container&quot; class=&quot;space-y-3&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp;&lt;!-- Dynamic Cards --&gt;<br> &nbsp; &nbsp; &nbsp;&lt;/div&gt;<br> &nbsp; &nbsp;&lt;/section&gt;<br><br> &nbsp;&lt;/main&gt;<br><br> &nbsp;&lt;!-- ADD / EDIT MODAL --&gt;<br> &nbsp;&lt;div id=&quot;modal&quot; class=&quot;fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 p-4&quot;&gt;<br> &nbsp; &nbsp;&lt;div class=&quot;bg-white rounded-xl max-w-md w-full p-5 space-y-4 shadow-xl&quot;&gt;<br> &nbsp; &nbsp; &nbsp;&lt;h3 id=&quot;modal-title&quot; class=&quot;text-lg font-bold text-gray-800&quot;&gt;&#54637;&#47785; &#52628;&#44032;&lt;/h3&gt;<br> &nbsp; &nbsp; &nbsp;<br> &nbsp; &nbsp; &nbsp;&lt;form id=&quot;modal-form&quot; class=&quot;space-y-3&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp;&lt;input type=&quot;hidden&quot; id=&quot;modal-type&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp;&lt;input type=&quot;hidden&quot; id=&quot;modal-edit-id&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp;<br> &nbsp; &nbsp; &nbsp; &nbsp;&lt;!-- Fields for Place --&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp;&lt;div id=&quot;field-place-name&quot; class=&quot;space-y-1&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;label class=&quot;text-xs font-semibold text-gray-600&quot;&gt;&#51109;&#49548;&#47749; / &#54620;&#51088;&#47749;&lt;/label&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;input type=&quot;text&quot; id=&quot;input-place-title&quot; placeholder=&quot;&#50696;: &#21917;&#20002;&#19968;&#21482;&#38795; (&#54756;&#46356;&#50864;&#51060;&#51592;&#49520;)&quot; class=&quot;w-full border rounded-lg p-2 text-sm&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp;&lt;/div&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp;&lt;div id=&quot;field-place-desc&quot; class=&quot;space-y-1&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;label class=&quot;text-xs font-semibold text-gray-600&quot;&gt;&#48660;&#47196;&#44536; &#44992;&#54017; &amp; &#51452;&#50836; &#51221;&#48372;&lt;/label&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;textarea id=&quot;input-place-desc&quot; rows=&quot;3&quot; placeholder=&quot;&#50696;: &#45012;&#48148;&#47196;&#50864; &#48148;&#49325;&#54616;&#44172; &#50836;&#52397;, &#50500;&#51060;&#50857; &#44228;&#46976;&#48374;&#51020;&#48165; &#52628;&#52380;&quot; class=&quot;w-full border rounded-lg p-2 text-sm&quot;&gt;&lt;/textarea&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp;&lt;/div&gt;<br><br> &nbsp; &nbsp; &nbsp; &nbsp;&lt;!-- Fields for Speech --&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp;&lt;div id=&quot;field-speech-kr&quot; class=&quot;space-y-1 hidden&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;label class=&quot;text-xs font-semibold text-gray-600&quot;&gt;&#54620;&#44397;&#50612; &#51032;&#48120;&lt;/label&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;input type=&quot;text&quot; id=&quot;input-speech-kr&quot; placeholder=&quot;&#50696;: &#44256;&#49688; &#45347;&#51648; &#47568;&#50500;&#51452;&#49464;&#50836;&quot; class=&quot;w-full border rounded-lg p-2 text-sm&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp;&lt;/div&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp;&lt;div id=&quot;field-speech-cn&quot; class=&quot;space-y-1 hidden&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;label class=&quot;text-xs font-semibold text-gray-600&quot;&gt;&#51473;&#44397;&#50612; (&#54620;&#51088;)&lt;/label&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;input type=&quot;text&quot; id=&quot;input-speech-cn&quot; placeholder=&quot;&#50696;: &#19981;&#35201;&#39321;&#33756;&quot; class=&quot;w-full border rounded-lg p-2 text-sm&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp;&lt;/div&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp;&lt;div id=&quot;field-speech-py&quot; class=&quot;space-y-1 hidden&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;label class=&quot;text-xs font-semibold text-gray-600&quot;&gt;&#48156;&#51020; (&#48337;&#51020;/&#54620;&#44544;)&lt;/label&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;input type=&quot;text&quot; id=&quot;input-speech-py&quot; placeholder=&quot;&#50696;: &#48512;&#50556;&#50724; &#50472;&#50521;&#52264;&#51060;&quot; class=&quot;w-full border rounded-lg p-2 text-sm&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp;&lt;/div&gt;<br><br> &nbsp; &nbsp; &nbsp; &nbsp;&lt;div class=&quot;flex justify-end space-x-2 pt-2&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;button type=&quot;button&quot; onclick=&quot;closeModal()&quot; class=&quot;px-4 py-2 border rounded-lg text-sm text-gray-600&quot;&gt;&#52712;&#49548;&lt;/button&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;button type=&quot;submit&quot; class=&quot;px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium&quot;&gt;&#51200;&#51109;&#54616;&#44592;&lt;/button&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp;&lt;/div&gt;<br> &nbsp; &nbsp; &nbsp;&lt;/form&gt;<br> &nbsp; &nbsp;&lt;/div&gt;<br> &nbsp;&lt;/div&gt;<br><br> &nbsp;&lt;script&gt;<br> &nbsp; &nbsp;// &#51648;&#51221;&#54644;&#51452;&#49888; Firebase Realtime Database URL<br> &nbsp; &nbsp;const firebaseConfig = {<br> &nbsp; &nbsp; &nbsp;databaseURL: &quot;https://myawesome-a2ea8-default-rtdb.firebaseio.com/&quot;<br> &nbsp; &nbsp;};<br> &nbsp; &nbsp;firebase.initializeApp(firebaseConfig);<br> &nbsp; &nbsp;const db = firebase.database();<br><br> &nbsp; &nbsp;// &#52488;&#44592; &#49884;&#46300; &#45936;&#51060;&#53552; (DB&#44032; &#48708;&#50612;&#51080;&#51012; &#44221;&#50864; &#51088;&#46041; &#51077;&#47141;)<br> &nbsp; &nbsp;const defaultPlaces = [<br> &nbsp; &nbsp; &nbsp;{ name: &quot;&#21917;&#20002;&#19968;&#21482;&#38795; (&#50577;&#44844;&#52824;)&quot;, tip: &quot;&#128161; &#45012;&#48148;&#47196;&#50864;(&#38149;&#21253;&#32905;) &#48148;&#49325;&#54616;&#44172; &#50836;&#52397;. &#50500;&#51060;&#50857; &#44228;&#46976; &#48374;&#51020;&#48165;(&#40481;&#34507;&#28818;&#39277;) &#52628;&#52380;.&quot;, query: &quot;&#21917;&#20002;&#19968;&#21482;&#38795;&quot; },<br> &nbsp; &nbsp; &nbsp;{ name: &quot;Xi Ding Hai Dan Dumplings (&#21916;&#40718;&#28023;&#32966;&#27700;&#39290;)&quot;, tip: &quot;&#128161; &#49457;&#44172;&#50508; &#47564;&#46160; &#48143; &#50500;&#51060;&#50857; &#49352;&#50864;&#44228;&#46976;&#47564;&#46160;(&#19977;&#40092;&#27700;&#39290;) &#52628;&#52380;. &#45824;&#44592; &#49884;&#44036; &#54869;&#51064; &#54596;&#49688;.&quot;, query: &quot;&#21916;&#40718;&#28023;&#32966;&#27700;&#39290;&quot; },<br> &nbsp; &nbsp; &nbsp;{ name: &quot;Mangata Coffee&quot;, tip: &quot;&#128161; 2&#52789; &#53580;&#46972;&#49828; &#52285;&#44032;&#49437;&#51060; &#49457;&#54644;&#45824;&#44368; &#48624; &#47749;&#45817;.&quot;, query: &quot;Mangata Coffee&quot; }<br> &nbsp; &nbsp;];<br><br> &nbsp; &nbsp;const defaultSpeech = [<br> &nbsp; &nbsp; &nbsp;{ kr: &quot;&#44256;&#49688; &#45347;&#51648; &#47568;&#50500;&#51452;&#49464;&#50836;&quot;, cn: &quot;&#19981;&#35201;&#39321;&#33756;&quot;, py: &quot;&#48512;&#50556;&#50724; &#50472;&#50521;&#52264;&#51060;&quot; },<br> &nbsp; &nbsp; &nbsp;{ kr: &quot;&#45916; &#47588;&#50868; &#44163;&#51004;&#47196; &#54644;&#51452;&#49464;&#50836;&quot;, cn: &quot;&#20570;&#36771;&#19968;&#28857;&#21543;&quot;, py: &quot;&#52068; &#46972; &#51060;&#45996; &#48148;&quot; },<br> &nbsp; &nbsp; &nbsp;{ kr: &quot;&#50612;&#47536;&#51060;&#50857; &#51032;&#51088; &#51080;&#45208;&#50836;?&quot;, cn: &quot;&#26377;&#20799;&#31461;&#26885;&#23376;&#21527;&#65311;&quot;, py: &quot;&#50836;&#50864; &#50620;&#53825; &#51060;&#52180; &#47560;?&quot; },<br> &nbsp; &nbsp; &nbsp;{ kr: &quot;&#46384;&#46907;&#54620; &#47932; &#48512;&#53441;&#54633;&#45768;&#45796;&quot;, cn: &quot;&#35831;&#32473;&#25105;&#28909;&#27700;&quot;, py: &quot;&#52845; &#44172;&#51060; &#50892; &#47084;&#49800;&#50640;&#51060;&quot; }<br> &nbsp; &nbsp;];<br><br> &nbsp; &nbsp;let currentPlaces = {};<br> &nbsp; &nbsp;let currentSpeech = {};<br><br> &nbsp; &nbsp;// 1. Firebase &#49892;&#49884;&#44036; &#49688;&#49888;<br> &nbsp; &nbsp;db.ref(&quot;places&quot;).on(&quot;value&quot;, (snapshot) =&gt; {<br> &nbsp; &nbsp; &nbsp;const data = snapshot.val();<br> &nbsp; &nbsp; &nbsp;if (!data) {<br> &nbsp; &nbsp; &nbsp; &nbsp;defaultPlaces.forEach(p =&gt; db.ref(&quot;places&quot;).push(p));<br> &nbsp; &nbsp; &nbsp; &nbsp;return;<br> &nbsp; &nbsp; &nbsp;}<br> &nbsp; &nbsp; &nbsp;currentPlaces = data;<br> &nbsp; &nbsp; &nbsp;renderPlaces();<br> &nbsp; &nbsp;});<br><br> &nbsp; &nbsp;db.ref(&quot;speech&quot;).on(&quot;value&quot;, (snapshot) =&gt; {<br> &nbsp; &nbsp; &nbsp;const data = snapshot.val();<br> &nbsp; &nbsp; &nbsp;if (!data) {<br> &nbsp; &nbsp; &nbsp; &nbsp;defaultSpeech.forEach(s =&gt; db.ref(&quot;speech&quot;).push(s));<br> &nbsp; &nbsp; &nbsp; &nbsp;return;<br> &nbsp; &nbsp; &nbsp;}<br> &nbsp; &nbsp; &nbsp;currentSpeech = data;<br> &nbsp; &nbsp; &nbsp;renderSpeech();<br> &nbsp; &nbsp;});<br><br> &nbsp; &nbsp;// 2. &#47116;&#45908;&#47553; &#54632;&#49688;<br> &nbsp; &nbsp;function renderPlaces() {<br> &nbsp; &nbsp; &nbsp;const container = document.getElementById(&quot;places-container&quot;);<br> &nbsp; &nbsp; &nbsp;container.innerHTML = &quot;&quot;;<br> &nbsp; &nbsp; &nbsp;Object.keys(currentPlaces).forEach(key =&gt; {<br> &nbsp; &nbsp; &nbsp; &nbsp;const p = currentPlaces[key];<br> &nbsp; &nbsp; &nbsp; &nbsp;const amapUrl = `https://uri.amap.com/search?keyword=${encodeURIComponent(p.query || p.name)}`;<br> &nbsp; &nbsp; &nbsp; &nbsp;<br> &nbsp; &nbsp; &nbsp; &nbsp;container.innerHTML += `<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;div class=&quot;bg-white p-4 rounded-xl shadow-sm border border-gray-100 space-y-2&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;div class=&quot;flex justify-between items-start&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;h3 class=&quot;font-bold text-gray-800 text-base&quot;&gt;${p.name}&lt;/h3&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;div class=&quot;flex gap-1&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;button onclick=&quot;editItem(&#39;place&#39;, &#39;${key}&#39;)&quot; class=&quot;text-gray-400 hover:text-indigo-600 p-1&quot;&gt;&lt;i class=&quot;fa-solid fa-pen-to-square&quot;&gt;&lt;/i&gt;&lt;/button&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;button onclick=&quot;deleteItem(&#39;places&#39;, &#39;${key}&#39;)&quot; class=&quot;text-gray-400 hover:text-red-500 p-1&quot;&gt;&lt;i class=&quot;fa-solid fa-trash&quot;&gt;&lt;/i&gt;&lt;/button&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;/div&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;/div&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;p class=&quot;text-xs text-gray-600 bg-amber-50 p-2.5 rounded-lg border border-amber-100 leading-relaxed&quot;&gt;${p.tip}&lt;/p&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;div class=&quot;pt-1 flex justify-end&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;a href=&quot;${amapUrl}&quot; target=&quot;_blank&quot; class=&quot;inline-flex items-center text-xs bg-blue-50 text-blue-600 px-2.5 py-1.5 rounded-lg font-medium hover:bg-blue-100&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;i class=&quot;fa-solid fa-map-location-dot mr-1&quot;&gt;&lt;/i&gt; &#44256;&#45909;&#51648;&#46020;(&#39640;&#24503;&#22320;&#22270;) &#50672;&#44208;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;/a&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;/div&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;/div&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp;`;<br> &nbsp; &nbsp; &nbsp;});<br> &nbsp; &nbsp;}<br><br> &nbsp; &nbsp;function renderSpeech() {<br> &nbsp; &nbsp; &nbsp;const container = document.getElementById(&quot;speech-container&quot;);<br> &nbsp; &nbsp; &nbsp;container.innerHTML = &quot;&quot;;<br> &nbsp; &nbsp; &nbsp;Object.keys(currentSpeech).forEach(key =&gt; {<br> &nbsp; &nbsp; &nbsp; &nbsp;const s = currentSpeech[key];<br> &nbsp; &nbsp; &nbsp; &nbsp;container.innerHTML += `<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;div class=&quot;bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;div class=&quot;space-y-1 flex-1 pr-2&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;div class=&quot;text-xs font-semibold text-indigo-600&quot;&gt;${s.kr}&lt;/div&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;div class=&quot;text-lg font-bold text-gray-900&quot;&gt;${s.cn}&lt;/div&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;div class=&quot;text-xs text-gray-400&quot;&gt;${s.py}&lt;/div&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;/div&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;div class=&quot;flex items-center gap-2&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;button onclick=&quot;speakChinese(&#39;${s.cn}&#39;)&quot; class=&quot;w-10 h-10 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center hover:bg-indigo-100 active:scale-95 transition&quot;&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;i class=&quot;fa-solid fa-volume-high&quot;&gt;&lt;/i&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;/button&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;button onclick=&quot;editItem(&#39;speech&#39;, &#39;${key}&#39;)&quot; class=&quot;text-gray-300 hover:text-indigo-600 p-1&quot;&gt;&lt;i class=&quot;fa-solid fa-pen-to-square&quot;&gt;&lt;/i&gt;&lt;/button&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;button onclick=&quot;deleteItem(&#39;speech&#39;, &#39;${key}&#39;)&quot; class=&quot;text-gray-300 hover:text-red-500 p-1&quot;&gt;&lt;i class=&quot;fa-solid fa-trash&quot;&gt;&lt;/i&gt;&lt;/button&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;/div&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&lt;/div&gt;<br> &nbsp; &nbsp; &nbsp; &nbsp;`;<br> &nbsp; &nbsp; &nbsp;});<br> &nbsp; &nbsp;}<br><br> &nbsp; &nbsp;// 3. &#51473;&#44397;&#50612; TTS<br> &nbsp; &nbsp;function speakChinese(text) {<br> &nbsp; &nbsp; &nbsp;if (&#39;speechSynthesis&#39; in window) {<br> &nbsp; &nbsp; &nbsp; &nbsp;window.speechSynthesis.cancel();<br> &nbsp; &nbsp; &nbsp; &nbsp;const utterance = new SpeechSynthesisUtterance(text);<br> &nbsp; &nbsp; &nbsp; &nbsp;utterance.lang = &#39;zh-CN&#39;;<br> &nbsp; &nbsp; &nbsp; &nbsp;utterance.rate = 0.85;<br> &nbsp; &nbsp; &nbsp; &nbsp;window.speechSynthesis.speak(utterance);<br> &nbsp; &nbsp; &nbsp;} else {<br> &nbsp; &nbsp; &nbsp; &nbsp;alert(&quot;&#51060; &#48652;&#46972;&#50864;&#51200;&#45716; &#51020;&#49457; &#51116;&#49373;&#51012; &#51648;&#50896;&#54616;&#51648; &#50506;&#49845;&#45768;&#45796;.&quot;);<br> &nbsp; &nbsp; &nbsp;}<br> &nbsp; &nbsp;}<br><br> &nbsp; &nbsp;// 4. &#47784;&#45804; &#48143; &#49688;&#51221;/&#49325;&#51228;/&#52628;&#44032; &#46041;&#51089;<br> &nbsp; &nbsp;function switchTab(tab) {<br> &nbsp; &nbsp; &nbsp;document.getElementById(&quot;tab-places&quot;).classList.toggle(&quot;hidden&quot;, tab !== &#39;places&#39;);<br> &nbsp; &nbsp; &nbsp;document.getElementById(&quot;tab-speech&quot;).classList.toggle(&quot;hidden&quot;, tab !== &#39;speech&#39;);<br> &nbsp; &nbsp; &nbsp;document.getElementById(&quot;tab-places-btn&quot;).classList.toggle(&quot;tab-active&quot;, tab === &#39;places&#39;);<br> &nbsp; &nbsp; &nbsp;document.getElementById(&quot;tab-speech-btn&quot;).classList.toggle(&quot;tab-active&quot;, tab === &#39;speech&#39;);<br> &nbsp; &nbsp;}<br><br> &nbsp; &nbsp;function openModal(type, editId = null) {<br> &nbsp; &nbsp; &nbsp;document.getElementById(&quot;modal-type&quot;).value = type;<br> &nbsp; &nbsp; &nbsp;document.getElementById(&quot;modal-edit-id&quot;).value = editId || &quot;&quot;;<br> &nbsp; &nbsp; &nbsp;document.getElementById(&quot;modal-title&quot;).innerText = editId ? &#39;&#54637;&#47785; &#49688;&#51221;&#39; : (type === &#39;place&#39; ? &#39;&#51109;&#49548; &#52628;&#44032;&#39; : &#39;&#54924;&#54868; &#52628;&#44032;&#39;);<br> &nbsp; &nbsp; &nbsp;<br> &nbsp; &nbsp; &nbsp;document.getElementById(&quot;field-place-name&quot;).classList.toggle(&quot;hidden&quot;, type !== &#39;place&#39;);<br> &nbsp; &nbsp; &nbsp;document.getElementById(&quot;field-place-desc&quot;).classList.toggle(&quot;hidden&quot;, type !== &#39;place&#39;);<br> &nbsp; &nbsp; &nbsp;document.getElementById(&quot;field-speech-kr&quot;).classList.toggle(&quot;hidden&quot;, type !== &#39;speech&#39;);<br> &nbsp; &nbsp; &nbsp;document.getElementById(&quot;field-speech-cn&quot;).classList.toggle(&quot;hidden&quot;, type !== &#39;speech&#39;);<br> &nbsp; &nbsp; &nbsp;document.getElementById(&quot;field-speech-py&quot;).classList.toggle(&quot;hidden&quot;, type !== &#39;speech&#39;);<br><br> &nbsp; &nbsp; &nbsp;if (editId) {<br> &nbsp; &nbsp; &nbsp; &nbsp;if (type === &#39;place&#39;) {<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;const item = currentPlaces[editId];<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;document.getElementById(&quot;input-place-title&quot;).value = item.name;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;document.getElementById(&quot;input-place-desc&quot;).value = item.tip;<br> &nbsp; &nbsp; &nbsp; &nbsp;} else {<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;const item = currentSpeech[editId];<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;document.getElementById(&quot;input-speech-kr&quot;).value = item.kr;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;document.getElementById(&quot;input-speech-cn&quot;).value = item.cn;<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;document.getElementById(&quot;input-speech-py&quot;).value = item.py;<br> &nbsp; &nbsp; &nbsp; &nbsp;}<br> &nbsp; &nbsp; &nbsp;} else {<br> &nbsp; &nbsp; &nbsp; &nbsp;document.getElementById(&quot;modal-form&quot;).reset();<br> &nbsp; &nbsp; &nbsp;}<br><br> &nbsp; &nbsp; &nbsp;document.getElementById(&quot;modal&quot;).classList.remove(&quot;hidden&quot;);<br> &nbsp; &nbsp;}<br><br> &nbsp; &nbsp;function editItem(type, key) {<br> &nbsp; &nbsp; &nbsp;openModal(type, key);<br> &nbsp; &nbsp;}<br><br> &nbsp; &nbsp;function deleteItem(path, key) {<br> &nbsp; &nbsp; &nbsp;if (confirm(&quot;&#51221;&#47568; &#49325;&#51228;&#54616;&#49884;&#44192;&#49845;&#45768;&#44620;?&quot;)) {<br> &nbsp; &nbsp; &nbsp; &nbsp;db.ref(`${path}/${key}`).remove();<br> &nbsp; &nbsp; &nbsp;}<br> &nbsp; &nbsp;}<br><br> &nbsp; &nbsp;function closeModal() {<br> &nbsp; &nbsp; &nbsp;document.getElementById(&quot;modal&quot;).classList.add(&quot;hidden&quot;);<br> &nbsp; &nbsp; &nbsp;document.getElementById(&quot;modal-form&quot;).reset();<br> &nbsp; &nbsp;}<br><br> &nbsp; &nbsp;document.getElementById(&quot;modal-form&quot;).addEventListener(&quot;submit&quot;, (e) =&gt; {<br> &nbsp; &nbsp; &nbsp;e.preventDefault();<br> &nbsp; &nbsp; &nbsp;const type = document.getElementById(&quot;modal-type&quot;).value;<br> &nbsp; &nbsp; &nbsp;const editId = document.getElementById(&quot;modal-edit-id&quot;).value;<br><br> &nbsp; &nbsp; &nbsp;if (type === &#39;place&#39;) {<br> &nbsp; &nbsp; &nbsp; &nbsp;const name = document.getElementById(&quot;input-place-title&quot;).value;<br> &nbsp; &nbsp; &nbsp; &nbsp;const tip = document.getElementById(&quot;input-place-desc&quot;).value;<br> &nbsp; &nbsp; &nbsp; &nbsp;if (!name) return;<br><br> &nbsp; &nbsp; &nbsp; &nbsp;const payload = { name, tip, query: name };<br> &nbsp; &nbsp; &nbsp; &nbsp;if (editId) {<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;db.ref(`places/${editId}`).update(payload);<br> &nbsp; &nbsp; &nbsp; &nbsp;} else {<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;db.ref(&quot;places&quot;).push(payload);<br> &nbsp; &nbsp; &nbsp; &nbsp;}<br> &nbsp; &nbsp; &nbsp;} else {<br> &nbsp; &nbsp; &nbsp; &nbsp;const kr = document.getElementById(&quot;input-speech-kr&quot;).value;<br> &nbsp; &nbsp; &nbsp; &nbsp;const cn = document.getElementById(&quot;input-speech-cn&quot;).value;<br> &nbsp; &nbsp; &nbsp; &nbsp;const py = document.getElementById(&quot;input-speech-py&quot;).value;<br> &nbsp; &nbsp; &nbsp; &nbsp;if (!cn) return;<br><br> &nbsp; &nbsp; &nbsp; &nbsp;const payload = { kr, cn, py };<br> &nbsp; &nbsp; &nbsp; &nbsp;if (editId) {<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;db.ref(`speech/${editId}`).update(payload);<br> &nbsp; &nbsp; &nbsp; &nbsp;} else {<br> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;db.ref(&quot;speech&quot;).push(payload);<br> &nbsp; &nbsp; &nbsp; &nbsp;}<br> &nbsp; &nbsp; &nbsp;}<br><br> &nbsp; &nbsp; &nbsp;closeModal();<br> &nbsp; &nbsp;});<br> &nbsp;&lt;/script&gt;<br>&lt;/body&gt;<br>&lt;/html&gt;<br></span></p></body></html>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>다롄 가족 여행 가이드 & 회화</title>
+  <!-- TailWind CSS & FontAwesome Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Firebase SDK (v9 Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    .tab-active { border-bottom: 2px solid #4F46E5; color: #4F46E5; font-weight: bold; }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen pb-12">
+
+  <!-- Header -->
+  <header class="bg-indigo-600 text-white p-4 sticky top-0 z-50 shadow-md">
+    <div class="max-w-md mx-auto flex justify-between items-center">
+      <h1 class="text-xl font-bold"><i class="fa-solid fa-plane-departure mr-2"></i>다롄 여행 가이드</h1>
+      <span class="text-xs bg-indigo-800 px-2 py-1 rounded flex items-center gap-1">
+        <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> 실시간 동기화
+      </span>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <div class="bg-white shadow-sm sticky top-[57px] z-40">
+    <div class="max-w-md mx-auto flex border-b">
+      <button id="tab-places-btn" onclick="switchTab('places')" class="flex-1 py-3 text-center text-gray-600 tab-active">
+        <i class="fa-solid fa-location-dot mr-1"></i> 장소 & 꿀팁
+      </button>
+      <button id="tab-speech-btn" onclick="switchTab('speech')" class="flex-1 py-3 text-center text-gray-600">
+        <i class="fa-solid fa-comments mr-1"></i> 생존 중국어
+      </button>
+    </div>
+  </div>
+
+  <main class="max-w-md mx-auto p-4">
+
+    <!-- TAB 1: PLACES -->
+    <section id="tab-places" class="space-y-4">
+      <div class="flex justify-between items-center mb-2">
+        <h2 class="text-lg font-bold text-gray-800">추천 맛집/관광지</h2>
+        <button onclick="openModal('place')" class="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-indigo-700">
+          <i class="fa-solid fa-plus mr-1"></i> 장소 추가
+        </button>
+      </div>
+
+      <div id="places-container" class="space-y-3">
+        <!-- Dynamic Cards -->
+      </div>
+    </section>
+
+    <!-- TAB 2: SPEECH -->
+    <section id="tab-speech" class="space-y-4 hidden">
+      <div class="flex justify-between items-center mb-2">
+        <h2 class="text-lg font-bold text-gray-800">현지 중국어 회화</h2>
+        <button onclick="openModal('speech')" class="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-indigo-700">
+          <i class="fa-solid fa-plus mr-1"></i> 회화 추가
+        </button>
+      </div>
+
+      <div id="speech-container" class="space-y-3">
+        <!-- Dynamic Cards -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ADD / EDIT MODAL -->
+  <div id="modal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl max-w-md w-full p-5 space-y-4 shadow-xl">
+      <h3 id="modal-title" class="text-lg font-bold text-gray-800">항목 추가</h3>
+      
+      <form id="modal-form" class="space-y-3">
+        <input type="hidden" id="modal-type">
+        <input type="hidden" id="modal-edit-id">
+        
+        <!-- Fields for Place -->
+        <div id="field-place-name" class="space-y-1">
+          <label class="text-xs font-semibold text-gray-600">장소명 / 한자명</label>
+          <input type="text" id="input-place-title" placeholder="예: 喝丢一只鞋 (헤디우이즈셰)" class="w-full border rounded-lg p-2 text-sm">
+        </div>
+        <div id="field-place-desc" class="space-y-1">
+          <label class="text-xs font-semibold text-gray-600">블로그 꿀팁 & 주요 정보</label>
+          <textarea id="input-place-desc" rows="3" placeholder="예: 꿔바로우 바삭하게 요청, 아이용 계란볶음밥 추천" class="w-full border rounded-lg p-2 text-sm"></textarea>
+        </div>
+
+        <!-- Fields for Speech -->
+        <div id="field-speech-kr" class="space-y-1 hidden">
+          <label class="text-xs font-semibold text-gray-600">한국어 의미</label>
+          <input type="text" id="input-speech-kr" placeholder="예: 고수 넣지 말아주세요" class="w-full border rounded-lg p-2 text-sm">
+        </div>
+        <div id="field-speech-cn" class="space-y-1 hidden">
+          <label class="text-xs font-semibold text-gray-600">중국어 (한자)</label>
+          <input type="text" id="input-speech-cn" placeholder="예: 不要香菜" class="w-full border rounded-lg p-2 text-sm">
+        </div>
+        <div id="field-speech-py" class="space-y-1 hidden">
+          <label class="text-xs font-semibold text-gray-600">발음 (병음/한글)</label>
+          <input type="text" id="input-speech-py" placeholder="예: 부야오 씨앙차이" class="w-full border rounded-lg p-2 text-sm">
+        </div>
+
+        <div class="flex justify-end space-x-2 pt-2">
+          <button type="button" onclick="closeModal()" class="px-4 py-2 border rounded-lg text-sm text-gray-600">취소</button>
+          <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium">저장하기</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // 지정해주신 Firebase Realtime Database URL
+    const firebaseConfig = {
+      databaseURL: "https://myawesome-a2ea8-default-rtdb.firebaseio.com/"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // 초기 시드 데이터 (DB가 비어있을 경우 자동 입력)
+    const defaultPlaces = [
+      { name: "喝丢一只鞋 (양꼬치)", tip: "💡 꿔바로우(锅包肉) 바삭하게 요청. 아이용 계란 볶음밥(鸡蛋炒饭) 추천.", query: "喝丢一只鞋" },
+      { name: "Xi Ding Hai Dan Dumplings (喜鼎海胆水饺)", tip: "💡 성게알 만두 및 아이용 새우계란만두(三鲜水饺) 추천. 대기 시간 확인 필수.", query: "喜鼎海胆水饺" },
+      { name: "Mangata Coffee", tip: "💡 2층 테라스 창가석이 성해대교 뷰 명당.", query: "Mangata Coffee" }
+    ];
+
+    const defaultSpeech = [
+      { kr: "고수 넣지 말아주세요", cn: "不要香菜", py: "부야오 씨앙차이" },
+      { kr: "덜 매운 것으로 해주세요", cn: "做辣一点吧", py: "쭤 라 이뎬 바" },
+      { kr: "어린이용 의자 있나요?", cn: "有儿童椅子吗？", py: "요우 얼퉁 이쯔 마?" },
+      { kr: "따뜻한 물 부탁합니다", cn: "请给我热水", py: "칭 게이 워 러슈에이" }
+    ];
+
+    let currentPlaces = {};
+    let currentSpeech = {};
+
+    // 1. Firebase 실시간 수신
+    db.ref("places").on("value", (snapshot) => {
+      const data = snapshot.val();
+      if (!data) {
+        defaultPlaces.forEach(p => db.ref("places").push(p));
+        return;
+      }
+      currentPlaces = data;
+      renderPlaces();
+    });
+
+    db.ref("speech").on("value", (snapshot) => {
+      const data = snapshot.val();
+      if (!data) {
+        defaultSpeech.forEach(s => db.ref("speech").push(s));
+        return;
+      }
+      currentSpeech = data;
+      renderSpeech();
+    });
+
+    // 2. 렌더링 함수
+    function renderPlaces() {
+      const container = document.getElementById("places-container");
+      container.innerHTML = "";
+      Object.keys(currentPlaces).forEach(key => {
+        const p = currentPlaces[key];
+        const amapUrl = `https://uri.amap.com/search?keyword=${encodeURIComponent(p.query || p.name)}`;
+        
+        container.innerHTML += `
+          <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 space-y-2">
+            <div class="flex justify-between items-start">
+              <h3 class="font-bold text-gray-800 text-base">${p.name}</h3>
+              <div class="flex gap-1">
+                <button onclick="editItem('place', '${key}')" class="text-gray-400 hover:text-indigo-600 p-1"><i class="fa-solid fa-pen-to-square"></i></button>
+                <button onclick="deleteItem('places', '${key}')" class="text-gray-400 hover:text-red-500 p-1"><i class="fa-solid fa-trash"></i></button>
+              </div>
+            </div>
+            <p class="text-xs text-gray-600 bg-amber-50 p-2.5 rounded-lg border border-amber-100 leading-relaxed">${p.tip}</p>
+            <div class="pt-1 flex justify-end">
+              <a href="${amapUrl}" target="_blank" class="inline-flex items-center text-xs bg-blue-50 text-blue-600 px-2.5 py-1.5 rounded-lg font-medium hover:bg-blue-100">
+                <i class="fa-solid fa-map-location-dot mr-1"></i> 고덕지도(高德地图) 연결
+              </a>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function renderSpeech() {
+      const container = document.getElementById("speech-container");
+      container.innerHTML = "";
+      Object.keys(currentSpeech).forEach(key => {
+        const s = currentSpeech[key];
+        container.innerHTML += `
+          <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center">
+            <div class="space-y-1 flex-1 pr-2">
+              <div class="text-xs font-semibold text-indigo-600">${s.kr}</div>
+              <div class="text-lg font-bold text-gray-900">${s.cn}</div>
+              <div class="text-xs text-gray-400">${s.py}</div>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="speakChinese('${s.cn}')" class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center hover:bg-indigo-100 active:scale-95 transition">
+                <i class="fa-solid fa-volume-high"></i>
+              </button>
+              <button onclick="editItem('speech', '${key}')" class="text-gray-300 hover:text-indigo-600 p-1"><i class="fa-solid fa-pen-to-square"></i></button>
+              <button onclick="deleteItem('speech', '${key}')" class="text-gray-300 hover:text-red-500 p-1"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // 3. 중국어 TTS
+    function speakChinese(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'zh-CN';
+        utterance.rate = 0.85;
+        window.speechSynthesis.speak(utterance);
+      } else {
+        alert("이 브라우저는 음성 재생을 지원하지 않습니다.");
+      }
+    }
+
+    // 4. 모달 및 수정/삭제/추가 동작
+    function switchTab(tab) {
+      document.getElementById("tab-places").classList.toggle("hidden", tab !== 'places');
+      document.getElementById("tab-speech").classList.toggle("hidden", tab !== 'speech');
+      document.getElementById("tab-places-btn").classList.toggle("tab-active", tab === 'places');
+      document.getElementById("tab-speech-btn").classList.toggle("tab-active", tab === 'speech');
+    }
+
+    function openModal(type, editId = null) {
+      document.getElementById("modal-type").value = type;
+      document.getElementById("modal-edit-id").value = editId || "";
+      document.getElementById("modal-title").innerText = editId ? '항목 수정' : (type === 'place' ? '장소 추가' : '회화 추가');
+      
+      document.getElementById("field-place-name").classList.toggle("hidden", type !== 'place');
+      document.getElementById("field-place-desc").classList.toggle("hidden", type !== 'place');
+      document.getElementById("field-speech-kr").classList.toggle("hidden", type !== 'speech');
+      document.getElementById("field-speech-cn").classList.toggle("hidden", type !== 'speech');
+      document.getElementById("field-speech-py").classList.toggle("hidden", type !== 'speech');
+
+      if (editId) {
+        if (type === 'place') {
+          const item = currentPlaces[editId];
+          document.getElementById("input-place-title").value = item.name;
+          document.getElementById("input-place-desc").value = item.tip;
+        } else {
+          const item = currentSpeech[editId];
+          document.getElementById("input-speech-kr").value = item.kr;
+          document.getElementById("input-speech-cn").value = item.cn;
+          document.getElementById("input-speech-py").value = item.py;
+        }
+      } else {
+        document.getElementById("modal-form").reset();
+      }
+
+      document.getElementById("modal").classList.remove("hidden");
+    }
+
+    function editItem(type, key) {
+      openModal(type, key);
+    }
+
+    function deleteItem(path, key) {
+      if (confirm("정말 삭제하시겠습니까?")) {
+        db.ref(`${path}/${key}`).remove();
+      }
+    }
+
+    function closeModal() {
+      document.getElementById("modal").classList.add("hidden");
+      document.getElementById("modal-form").reset();
+    }
+
+    document.getElementById("modal-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const type = document.getElementById("modal-type").value;
+      const editId = document.getElementById("modal-edit-id").value;
+
+      if (type === 'place') {
+        const name = document.getElementById("input-place-title").value;
+        const tip = document.getElementById("input-place-desc").value;
+        if (!name) return;
+
+        const payload = { name, tip, query: name };
+        if (editId) {
+          db.ref(`places/${editId}`).update(payload);
+        } else {
+          db.ref("places").push(payload);
+        }
+      } else {
+        const kr = document.getElementById("input-speech-kr").value;
+        const cn = document.getElementById("input-speech-cn").value;
+        const py = document.getElementById("input-speech-py").value;
+        if (!cn) return;
+
+        const payload = { kr, cn, py };
+        if (editId) {
+          db.ref(`speech/${editId}`).update(payload);
+        } else {
+          db.ref("speech").push(payload);
+        }
+      }
+
+      closeModal();
+    });
+  </script>
+</body>
+</html>
