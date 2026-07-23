@@ -37,7 +37,7 @@
   <div class="bg-white/80 backdrop-blur-md shadow-sm sticky top-[60px] z-40 border-b border-indigo-100">
     <div class="max-w-md mx-auto flex">
       <button id="tab-schedule-btn" onclick="switchTab('schedule')" class="flex-1 py-3 text-center text-gray-500 text-sm font-medium tab-active transition-all">
-        <i class="fa-solid fa-calendar-star mr-1 text-indigo-500"></i> 여행 일정
+        <i class="fa-solid fa-calendar-star mr-1 text-indigo-500"></i> 상세 일정
       </button>
       <button id="tab-places-btn" onclick="switchTab('places')" class="flex-1 py-3 text-center text-gray-500 text-sm font-medium transition-all">
         <i class="fa-solid fa-map-location-dot mr-1 text-pink-500"></i> 장소 & 꿀팁
@@ -55,7 +55,7 @@
     <section id="tab-schedule" class="space-y-4">
       <div class="flex justify-between items-center px-1">
         <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
-          <i class="fa-solid fa-route text-indigo-500"></i> 1일차 ~ 4일차 상세 일정
+          <i class="fa-solid fa-route text-indigo-500"></i> 시간대별 이동 동선
         </h2>
         <button onclick="openModal('schedule')" class="bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white px-3 py-1.5 rounded-full text-xs font-semibold shadow-md shadow-indigo-200 transition">
           <i class="fa-solid fa-plus mr-1"></i> 일정 추가
@@ -123,12 +123,20 @@
           </select>
         </div>
         <div id="field-sched-title" class="space-y-1">
-          <label class="text-xs font-bold text-gray-600">시간 및 일정 항목</label>
-          <input type="text" id="input-sched-title" placeholder="예: [오후] 성해광장 산책 및 야경 감상" class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:outline-indigo-500">
+          <label class="text-xs font-bold text-gray-600">시간대 & 일정 제목 (한자명 포함)</label>
+          <input type="text" id="input-sched-title" placeholder="예: [14:00] 성해광장 (星海广场)" class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:outline-indigo-500">
+        </div>
+        <div id="field-sched-addr" class="space-y-1">
+          <label class="text-xs font-bold text-gray-600">주소 / 한자 주소</label>
+          <input type="text" id="input-sched-addr" placeholder="예: 沙河口区 中山路 572号" class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:outline-indigo-500">
+        </div>
+        <div id="field-sched-trans" class="space-y-1">
+          <label class="text-xs font-bold text-gray-600">이동 방법 & 소요 시간</label>
+          <input type="text" id="input-sched-trans" placeholder="예: 🚕 택시 약 25분 (약 35元)" class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:outline-indigo-500">
         </div>
         <div id="field-sched-desc" class="space-y-1">
-          <label class="text-xs font-bold text-gray-600">상세 메모 / 주의사항</label>
-          <textarea id="input-sched-desc" rows="2" placeholder="예: 바람이 강할 수 있으니 아이 겉옷 챙기기" class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:outline-indigo-500"></textarea>
+          <label class="text-xs font-bold text-gray-600">블로그 꿀팁 & 주요 특징</label>
+          <textarea id="input-sched-desc" rows="2" placeholder="예: 바닷바람 강함. 아이 겉옷 필수!" class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:outline-indigo-500"></textarea>
         </div>
 
         <!-- Fields for Place -->
@@ -142,9 +150,15 @@
         </div>
 
         <!-- Fields for Speech -->
-        <div id="field-speech-kr" class="space-y-1 hidden">
-          <label class="text-xs font-bold text-gray-600">한국어 의미</label>
-          <input type="text" id="input-speech-kr" placeholder="예: 고수 넣지 말아주세요" class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:outline-indigo-500">
+        <div id="field-speech-kr" class="space-y-1 hidden relative">
+          <label class="text-xs font-bold text-gray-600 flex justify-between">
+            <span>한국어 의미</span>
+            <span class="text-[10px] text-indigo-500 font-normal">* 검색 시 중국어 자동추천</span>
+          </label>
+          <input type="text" id="input-speech-kr" oninput="onSpeechKrInput(this.value)" placeholder="예: 물, 고수, 얼마, 택시, 영수증..." class="w-full border border-gray-200 rounded-xl p-2.5 text-sm focus:outline-indigo-500" autocomplete="off">
+          
+          <!-- Auto-complete Dropdown List -->
+          <div id="speech-autocomplete" class="hidden absolute left-0 right-0 top-[65px] bg-white border border-indigo-100 rounded-xl shadow-lg z-50 max-h-40 overflow-y-auto divide-y divide-gray-50"></div>
         </div>
         <div id="field-speech-cn" class="space-y-1 hidden">
           <label class="text-xs font-bold text-gray-600">중국어 (한자)</label>
@@ -185,17 +199,50 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // 1일차~4일차 기본 일정 데이터
+    // 여행 회화 자동완성용 데이터베이스
+    const speechDictionary = [
+      { kr: "고수 넣지 말아주세요 🌿", cn: "不要香菜", py: "부야오 씨앙차이" },
+      { kr: "고수 따로 주세요 🌿", cn: "香菜另外放", py: "씨앙차이 링와이 팡" },
+      { kr: "덜 매운 것으로 해주세요 🌶️", cn: "少辣 / 做辣一点吧", py: "샤오 라 / 쭤 라 이뎬 바" },
+      { kr: "매지 않게 해주세요 🙅‍♂️", cn: "不要辣", py: "부야오 라" },
+      { kr: "어린이용 의자 있나요? 👶", cn: "有儿童椅子吗？", py: "요우 얼퉁 이쯔 마?" },
+      { kr: "따뜻한 물 부탁합니다 ☕", cn: "请给我热水", py: "칭 게이 워 러슈에이" },
+      { kr: "차 가운 물 부탁합니다 🧊", cn: "请给我冰水", py: "칭 게이 워 빙슈에이" },
+      { kr: "메뉴판 좀 주세요 📖", cn: "请给我菜单", py: "칭 게이 워 차이단" },
+      { kr: "이것으로 주세요 👉", cn: "我要这个", py: "워 야오 쩌거" },
+      { kr: "계산해 주세요 💳", cn: "买单 / 结账", py: "마이딴 / 지에짱" },
+      { kr: "영수증 주세요 🧾", cn: "发票 / 小票", py: "파피아오 / 샤오피아오" },
+      { kr: "포장해 주세요 🛍️", cn: "打包", py: "따바오" },
+      { kr: "화장실이 어디인가요? 🚻", cn: "洗手间在哪儿？", py: "씨쇼우지에 자이나얼?" },
+      { kr: "택시 승강장이 어디인가요? 🚖", cn: "出租车乘车点在哪儿？", py: "추쭈처 청처뎬 자이나얼?" },
+      { kr: "이 주소로 가주세요 📍", cn: "请带我去这个地址", py: "칭 따이 워 취 쩌거 디즈" },
+      { kr: "미터기 켜주세요 ⏱️", cn: "请打表", py: "칭 타뱌오" },
+      { kr: "얼마인가요? 💰", cn: "多少钱？", py: "두어샤오 치엔?" },
+      { kr: "너무 비싸요 💸", cn: "太贵了", py: "타이 구이 러" },
+      { kr: "깎아주세요 🙏", cn: "便宜一点吧", py: "피엔이 이뎬 바" },
+      { kr: "수하물 찾는 곳이 어디인가요? 🧳", cn: "行李提取处在哪儿？", py: "싱리 티취추 자이나얼?" },
+      { kr: "감사합니다 😊", cn: "谢谢", py: "셰셰" },
+      { kr: "천만에요 👋", cn: "不客气", py: "부커치" },
+      { kr: "죄송합니다 🙇‍♂️", cn: "对不起", py: "두이부치" },
+      { kr: "괜찮습니다 👌", cn: "没关系", py: "메이관시" },
+      { kr: "사진 좀 찍어주시겠어요? 📸", cn: "能帮我们拍照吗？", py: "넝 빵 워먼 파이짜오 마?" },
+      { kr: "와이파이 비번이 뭔가요? 📶", cn: "WiFi密码是什么？", py: "와이파이 미마 시 스셔머?" }
+    ];
+
+    // 기본 일정 데이터
     const defaultSchedules = [
-      { day: "1일차", title: "다롄 공항 도착 & 호텔 체크인 ✈️", desc: "공항 도착 후 숙소 이동, 짐 보관 후 주변 탐방" },
-      { day: "1일차", title: "성해광장 (星海广场) 야경 🌙", desc: "바닷바람 대비 유아용 겉옷 준비. 바다 뷰 카페 활용" },
-      { day: "2일차", title: "성해공원 & 해안 산책 🌊", desc: "아이들과 산책하기 좋은 코스, 여유로운 스케줄" },
-      { day: "2일차", title: "점심: 喜鼎海胆水饺 (성게알 만두) 🥟", desc: "아이용 삼선수교(새우계란만두) 주문, 웨이팅 확인" },
-      { day: "2일차", title: "동방수성 (베네치아 운하 마을) 🏰", desc: "곤돌라 탑승 가능, 사진 촬영 명소" },
-      { day: "3일차", title: "다롄 해양성공원 / 수족관 🐬", desc: "어린이 동반 필수 코스, 공연 시간 사전 체크" },
-      { day: "3일차", title: "저녁: 喝丢一只鞋 (양꼬치) 🍢", desc: "안 매운 계란볶음밥 및 꿔바로우 아이 추천 메뉴" },
-      { day: "4일차", title: "쇼핑 & 기념품 구매 🛍️", desc: "마트 쇼핑 및 공항 이동 준비" },
-      { day: "4일차", title: "다롄 공항 출발 및 귀국 🛫", desc: "출발 2시간 30분 전 공항 도착 권장" }
+      { day: "1일차", title: "[12:30] 다롄 저우수이쯔 국제공항 (大连周水子国际机场)", addr: "甘井子区 迎客路 100号", trans: "✈️ 한국 출발 후 도착 / 입국 수속", desc: "💡 [꿀팁] 입국 심사 시 가족 단체 라인 활용, 디디(DiDi) 앱으로 호출 시 공항 P2 주차장에서 승차" },
+      { day: "1일차", title: "[14:00] 숙소 체크인 및 짐 보관", addr: "성해광장 근처 (沙河口区 中山路)", trans: "🚕 택시 약 25~30분 (약 35~40元)", desc: "💡 [꿀팁] 아이 컨디션 조절을 위해 체크인 후 30분 휴식 권장" },
+      { day: "1일차", title: "[16:30] 성해광장 (星海广场)", addr: "沙河口区 中山路 572号", trans: "🚶 도보 이동 (또는 택시 5분)", desc: "💡 [꿀팁] 아시아 최대 광장! 갈매기 모이주기 체험 인기. 바닷바람이 강해 유아용 바람막이 겉옷 필수" },
+      { day: "1일차", title: "[18:30] 저녁: Mangata Coffee & 레스토랑", addr: "沙河口区 星海广场 滨海西路", trans: "🚶 광장 내 도보 5분", desc: "💡 [꿀팁] 2층 테라스 창가석이 성해대교(星海湾大桥) 야경 뷰 명당! 아이용 감자튀김/파스타 판매" },
+      { day: "2일차", title: "[10:00] 성해공원 (星海公园)", addr: "沙河口区 中山路 634号", trans: "🚕 택시 약 10분 (기본요금 수준)", desc: "💡 [꿀팁] 해안 산책로가 평탄하여 유모차 이동 매우 편리. 소형 놀이기구 구역 유아 맞춤" },
+      { day: "2일차", title: "[12:30] 점심: 시딩 성게알 만두 (喜鼎海胆水饺)", addr: "中山区 中山路 108号 (파빌리온 Mall)", trans: "🚕 택시 약 20분", desc: "💡 [꿀팁] 웨이팅이 길어 12시 이전 방문 필수! 아이용으로 자극적이지 않은 삼선수교(새우계란) 강력 추천" },
+      { day: "2일차", title: "[15:00] 동방수성 (东方水城 - 베네치아 운하 마을)", addr: "中山区 港浦路 3号", trans: "🚕 택시 약 15분", desc: "💡 [꿀팁] 곤돌라 배 탑승 체험 인기(인당 약 60元). 오후 3~4시 사이 햇살이 예뻐 가족사진 명소" },
+      { day: "3일차", title: "[09:30] 다롄 성해 해양성공원 / 수족관 (圣亚海洋世界)", addr: "沙河口区 中山路 608号", trans: "🚕 택시 약 15분", desc: "💡 [꿀팁] 어린이 동반 필수 코스! 돌고래 및 흰돌고래(벨루가) 공연 시간 입장 직후 모바일로 먼저 확인" },
+      { day: "3일차", title: "[13:00] 점심: 현지 유명 식당 / 만두전문점", addr: "수족관 인근 식당가", trans: "🚶 도보 이동", desc: "💡 [꿀팁] 아이가 먹을 안 매운 계란볶음밥(鸡蛋炒饭)과 꿔바로우 사전 주문" },
+      { day: "3일차", title: "[18:00] 저녁: 헤디우이즈셰 양꼬치 (喝丢一只鞋)", addr: "中山区 民主广场 附近", trans: "🚕 택시 약 20분", desc: "💡 [꿀팁] 양꼬치는 안 매운 맛(不辣) 요청. 꿔바로우가 바삭해서 아이들이 매우 잘 먹음" },
+      { day: "4일차", title: "[10:00] 대형마트 쇼핑 (월마트/대윤발 大润发)", addr: "中山区 胜利广场 附近", trans: "🚕 택시 약 10분", desc: "💡 [꿀팁] 해산물 스낵, 칭따오 맥주, 아이 간식류 구매. 500元 이상 구매 시 귀국 짐 공간 체크" },
+      { day: "4일차", title: "[12:30] 다롄 저우수이쯔 공항 이동 및 귀국", addr: "甘井子区 迎客路 100号", trans: "🚕 택시 약 30분 (출발 2시간 30분 전 도착)", desc: "💡 [꿀팁] 공항 내 유아 휴게실 이용 가능. 남은 위안화 현금 소진" }
     ];
 
     const defaultPlaces = [
@@ -261,10 +308,10 @@
       container.innerHTML = "";
 
       const days = [
-        { name: "1일차", icon: "fa-plane-arrival", color: "indigo" },
-        { name: "2일차", icon: "fa-water", color: "blue" },
-        { name: "3일차", icon: "fa-fish", color: "teal" },
-        { name: "4일차", icon: "fa-bag-shopping", color: "purple" }
+        { name: "1일차", icon: "fa-plane-arrival" },
+        { name: "2일차", icon: "fa-water" },
+        { name: "3일차", icon: "fa-fish" },
+        { name: "4일차", icon: "fa-bag-shopping" }
       ];
       
       days.forEach(dayObj => {
@@ -278,29 +325,47 @@
         } else {
           dayItems.forEach(item => {
             itemsHtml += `
-              <div class="bg-gray-50/80 p-3 rounded-xl border border-gray-100 flex justify-between items-start hover:bg-gray-100/80 transition">
-                <div>
-                  <div class="text-xs font-semibold text-gray-800 flex items-center gap-1.5">${item.title}</div>
-                  ${item.desc ? `<div class="text-[11px] text-gray-500 mt-1 leading-relaxed">${item.desc}</div>` : ''}
+              <div class="bg-gray-50/90 p-3.5 rounded-xl border border-gray-100 space-y-1.5 hover:bg-gray-100/80 transition">
+                <div class="flex justify-between items-start">
+                  <div class="text-xs font-bold text-gray-800 leading-snug">${item.title}</div>
+                  <div class="flex gap-1 ml-2 shrink-0">
+                    <button onclick="editItem('schedule', '${item.key}')" class="text-gray-300 hover:text-indigo-600 p-1 text-xs"><i class="fa-solid fa-pen-to-square"></i></button>
+                    <button onclick="deleteItem('schedules', '${item.key}')" class="text-gray-300 hover:text-red-500 p-1 text-xs"><i class="fa-solid fa-trash"></i></button>
+                  </div>
                 </div>
-                <div class="flex gap-1 ml-2">
-                  <button onclick="editItem('schedule', '${item.key}')" class="text-gray-300 hover:text-indigo-600 p-1 text-xs"><i class="fa-solid fa-pen-to-square"></i></button>
-                  <button onclick="deleteItem('schedules', '${item.key}')" class="text-gray-300 hover:text-red-500 p-1 text-xs"><i class="fa-solid fa-trash"></i></button>
-                </div>
+
+                ${item.addr ? `
+                  <div class="text-[11px] text-gray-500 flex items-center gap-1">
+                    <i class="fa-solid fa-location-dot text-indigo-400 shrink-0"></i>
+                    <span>${item.addr}</span>
+                  </div>
+                ` : ''}
+
+                ${item.trans ? `
+                  <div class="text-[11px] text-indigo-600 font-medium bg-indigo-50/60 px-2 py-1 rounded-md inline-block">
+                    ${item.trans}
+                  </div>
+                ` : ''}
+
+                ${item.desc ? `
+                  <div class="text-[11px] text-amber-800 bg-amber-50/80 p-2 rounded-lg border border-amber-100/60 leading-relaxed mt-1">
+                    ${item.desc}
+                  </div>
+                ` : ''}
               </div>
             `;
           });
         }
 
         container.innerHTML += `
-          <div class="bg-white p-4 rounded-2xl shadow-sm border border-indigo-50 space-y-2.5">
+          <div class="bg-white p-4 rounded-2xl shadow-sm border border-indigo-50 space-y-3">
             <h3 class="font-bold text-indigo-600 text-xs border-b border-indigo-50 pb-2 flex items-center justify-between">
-              <span class="flex items-center gap-1.5">
+              <span class="flex items-center gap-1.5 text-sm">
                 <i class="fa-solid ${dayObj.icon} text-indigo-500"></i> ${dayObj.name}
               </span>
-              <span class="text-[10px] font-normal text-indigo-300">DAY SCHEDULE</span>
+              <span class="text-[10px] font-normal text-indigo-300">DAY ROUTE</span>
             </h3>
-            <div class="space-y-2 pt-0.5">${itemsHtml}</div>
+            <div class="space-y-2.5 pt-0.5">${itemsHtml}</div>
           </div>
         `;
       });
@@ -359,6 +424,45 @@
       });
     }
 
+    // 회화 검색 시 자동완성 로직
+    function onSpeechKrInput(val) {
+      const box = document.getElementById("speech-autocomplete");
+      const keyword = val.trim().toLowerCase();
+      
+      if (!keyword) {
+        box.classList.add("hidden");
+        box.innerHTML = "";
+        return;
+      }
+
+      const matches = speechDictionary.filter(item => item.kr.toLowerCase().includes(keyword));
+
+      if (matches.length === 0) {
+        box.classList.add("hidden");
+        box.innerHTML = "";
+        return;
+      }
+
+      box.innerHTML = matches.map(m => `
+        <div onclick="selectSpeechAuto('${m.kr}', '${m.cn}', '${m.py}')" class="p-2.5 hover:bg-indigo-50 cursor-pointer text-xs space-y-0.5">
+          <div class="font-bold text-gray-800">${m.kr}</div>
+          <div class="text-[11px] text-indigo-600 font-semibold">${m.cn} <span class="text-gray-400 font-normal">(${m.py})</span></div>
+        </div>
+      `).join("");
+
+      box.classList.remove("hidden");
+    }
+
+    function selectSpeechAuto(kr, cn, py) {
+      document.getElementById("input-speech-kr").value = kr;
+      document.getElementById("input-speech-cn").value = cn;
+      document.getElementById("input-speech-py").value = py;
+      
+      const box = document.getElementById("speech-autocomplete");
+      box.classList.add("hidden");
+      box.innerHTML = "";
+    }
+
     function speakChinese(text) {
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
@@ -391,6 +495,8 @@
       
       document.getElementById("field-sched-day").classList.toggle("hidden", type !== 'schedule');
       document.getElementById("field-sched-title").classList.toggle("hidden", type !== 'schedule');
+      document.getElementById("field-sched-addr").classList.toggle("hidden", type !== 'schedule');
+      document.getElementById("field-sched-trans").classList.toggle("hidden", type !== 'schedule');
       document.getElementById("field-sched-desc").classList.toggle("hidden", type !== 'schedule');
 
       document.getElementById("field-place-name").classList.toggle("hidden", type !== 'place');
@@ -400,11 +506,17 @@
       document.getElementById("field-speech-cn").classList.toggle("hidden", type !== 'speech');
       document.getElementById("field-speech-py").classList.toggle("hidden", type !== 'speech');
 
+      const autoBox = document.getElementById("speech-autocomplete");
+      autoBox.classList.add("hidden");
+      autoBox.innerHTML = "";
+
       if (editId) {
         if (type === 'schedule') {
           const item = currentSchedules[editId];
           document.getElementById("input-sched-day").value = item.day;
           document.getElementById("input-sched-title").value = item.title;
+          document.getElementById("input-sched-addr").value = item.addr || "";
+          document.getElementById("input-sched-trans").value = item.trans || "";
           document.getElementById("input-sched-desc").value = item.desc || "";
         } else if (type === 'place') {
           const item = currentPlaces[editId];
@@ -434,6 +546,9 @@
     function closeModal() {
       document.getElementById("modal").classList.add("hidden");
       document.getElementById("modal-form").reset();
+      const autoBox = document.getElementById("speech-autocomplete");
+      autoBox.classList.add("hidden");
+      autoBox.innerHTML = "";
     }
 
     document.getElementById("modal-form").addEventListener("submit", (e) => {
@@ -444,10 +559,12 @@
       if (type === 'schedule') {
         const day = document.getElementById("input-sched-day").value;
         const title = document.getElementById("input-sched-title").value;
+        const addr = document.getElementById("input-sched-addr").value;
+        const trans = document.getElementById("input-sched-trans").value;
         const desc = document.getElementById("input-sched-desc").value;
         if (!title) return;
 
-        const payload = { day, title, desc };
+        const payload = { day, title, addr, trans, desc };
         if (editId) db.ref(`schedules/${editId}`).update(payload);
         else db.ref("schedules").push(payload);
       } else if (type === 'place') {
