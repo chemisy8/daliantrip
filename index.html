@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>다롄 가족 여행</title>
+  <title>다롄 가족 여행 💕</title>
   
   <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -15,35 +15,41 @@
   
   <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-    body { font-family: 'Pretendard', sans-serif; }
-    .active-tab { border-bottom: 2.5px solid #6366f1; color: #4f46e5; font-weight: bold; }
+    body { font-family: 'Pretendard', sans-serif; background-color: #fdf6f9; }
+    .active-tab { border-bottom: 3px solid #ec4899; color: #db2777; font-weight: bold; }
+    .cute-card { border-radius: 1rem; box-shadow: 0 4px 15px rgba(244, 114, 182, 0.08); }
+    .toast-msg {
+      position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.75); color: white; padding: 6px 16px;
+      border-radius: 20px; font-size: 11px; z-index: 100; transition: opacity 0.3s;
+    }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-800 pb-16">
+<body class="text-slate-700 pb-20">
 
   <!-- 헤더 -->
-  <header class="bg-indigo-600 text-white px-4 py-3 sticky top-0 z-50 shadow-sm">
+  <header class="bg-gradient-to-r from-pink-400 via-rose-300 to-purple-400 text-white px-4 py-3.5 sticky top-0 z-50 shadow-sm">
     <div class="max-w-md mx-auto flex justify-between items-center">
       <h1 class="text-base font-bold flex items-center gap-1.5">
-        ✈️ 다롄 가족 여행
+        ✈️ 다롄 가족 여행 🌸✨
       </h1>
-      <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full flex items-center gap-1">
-        <span class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span> 동기화 중
+      <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded-full flex items-center gap-1 backdrop-blur-sm">
+        <span class="w-1.5 h-1.5 bg-green-300 rounded-full animate-ping"></span> 실시간 연결중 🎀
       </span>
     </div>
   </header>
 
   <!-- 탭 메뉴 -->
-  <nav class="bg-white border-b border-slate-200 sticky top-[48px] z-40 shadow-sm">
+  <nav class="bg-white/80 backdrop-blur-md border-b border-pink-100 sticky top-[49px] z-40 shadow-xs">
     <div class="max-w-md mx-auto flex text-center text-xs font-medium">
       <button onclick="switchTab('schedule')" id="tab-schedule" class="flex-1 py-2.5 active-tab">
-        <i class="fa-regular fa-clock mr-1"></i>상세 일정
+        ⏰ 상세 일정
       </button>
-      <button onclick="switchTab('places')" id="tab-places" class="flex-1 py-2.5 text-slate-500">
-        <i class="fa-solid fa-map-location-dot mr-1"></i>장소&팁
+      <button onclick="switchTab('places')" id="tab-places" class="flex-1 py-2.5 text-slate-400">
+        📍 장소&꿀팁
       </button>
-      <button onclick="switchTab('speech')" id="tab-speech" class="flex-1 py-2.5 text-slate-500">
-        <i class="fa-solid fa-comments mr-1"></i>회화
+      <button onclick="switchTab('speech')" id="tab-speech" class="flex-1 py-2.5 text-slate-400">
+        💬 생존 회화
       </button>
     </div>
   </nav>
@@ -54,115 +60,137 @@
     <!-- 1. 상세 일정 탭 -->
     <section id="sec-schedule" class="space-y-2.5">
       <div class="flex justify-between items-center px-1">
-        <span class="text-xs font-bold text-slate-700">🗺️ 동선 목록</span>
-        <div class="flex gap-1">
-          <button onclick="resetToInitialData()" class="text-[11px] bg-amber-500 text-white px-2 py-1 rounded hover:bg-amber-600">
-            <i class="fa-solid fa-rotate-left mr-0.5"></i>복구
+        <span class="text-xs font-bold text-pink-600 flex items-center gap-1">🗓️ 동선 스케줄</span>
+        <div class="flex gap-1.5">
+          <button onclick="resetToInitialData()" class="text-[11px] bg-amber-400 text-white px-2 py-1 rounded-full shadow-xs hover:bg-amber-500">
+            🔄 원본 복구
           </button>
-          <button onclick="openModal('schedule')" class="text-[11px] bg-indigo-600 text-white px-2 py-1 rounded hover:bg-indigo-700">
-            + 일정
+          <button onclick="openModal('schedule')" class="text-[11px] bg-rose-400 text-white px-2.5 py-1 rounded-full shadow-xs hover:bg-rose-500">
+            + 일정 추가
           </button>
         </div>
       </div>
-      <div id="schedule-list" class="space-y-2"></div>
+      <div id="schedule-list" class="space-y-2.5"></div>
     </section>
 
     <!-- 2. 장소 & 꿀팁 탭 -->
     <section id="sec-places" class="space-y-2.5 hidden">
       <div class="flex justify-between items-center px-1">
-        <span class="text-xs font-bold text-slate-700">📌 주요 장소</span>
-        <button onclick="openModal('place')" class="text-[11px] bg-indigo-600 text-white px-2 py-1 rounded hover:bg-indigo-700">
-          + 장소
+        <span class="text-xs font-bold text-pink-600">📌 추천 장소</span>
+        <button onclick="openModal('place')" class="text-[11px] bg-rose-400 text-white px-2.5 py-1 rounded-full shadow-xs">
+          + 장소 추가
         </button>
       </div>
-      <div id="places-list" class="space-y-2"></div>
+      <div id="places-list" class="space-y-2.5"></div>
     </section>
 
     <!-- 3. 생존 회화 탭 -->
     <section id="sec-speech" class="space-y-2.5 hidden">
       <div class="flex justify-between items-center px-1">
-        <span class="text-xs font-bold text-slate-700">🗣️ 필수 회화</span>
-        <button onclick="openModal('speech')" class="text-[11px] bg-indigo-600 text-white px-2 py-1 rounded hover:bg-indigo-700">
-          + 표현
+        <span class="text-xs font-bold text-pink-600">🗣️ 상황별 현지 회화</span>
+        <button onclick="openModal('speech')" class="text-[11px] bg-rose-400 text-white px-2.5 py-1 rounded-full shadow-xs">
+          + 표현 추가
         </button>
       </div>
-      <div id="speech-list" class="space-y-2"></div>
+
+      <!-- 상황별 필터 버튼 -->
+      <div id="speech-categories" class="flex gap-1 overflow-x-auto pb-1 text-[11px] no-scrollbar">
+        <button onclick="filterSpeech('전체')" class="sp-cat-btn bg-pink-500 text-white px-2.5 py-1 rounded-full shrink-0 font-medium">전체</button>
+        <button onclick="filterSpeech('식당')" class="sp-cat-btn bg-white text-slate-500 border border-pink-100 px-2.5 py-1 rounded-full shrink-0">🍽️ 식당</button>
+        <button onclick="filterSpeech('교통')" class="sp-cat-btn bg-white text-slate-500 border border-pink-100 px-2.5 py-1 rounded-full shrink-0">🚕 교통</button>
+        <button onclick="filterSpeech('호텔')" class="sp-cat-btn bg-white text-slate-500 border border-pink-100 px-2.5 py-1 rounded-full shrink-0">🏨 호텔</button>
+        <button onclick="filterSpeech('쇼핑')" class="sp-cat-btn bg-white text-slate-500 border border-pink-100 px-2.5 py-1 rounded-full shrink-0">🛍️ 쇼핑</button>
+        <button onclick="filterSpeech('기타/긴급')" class="sp-cat-btn bg-white text-slate-500 border border-pink-100 px-2.5 py-1 rounded-full shrink-0">🚨 긴급/기타</button>
+      </div>
+
+      <div id="speech-list" class="space-y-2.5"></div>
     </section>
 
   </main>
 
+  <!-- 저작권 푸터 -->
+  <footer class="text-center py-4 text-[11px] text-pink-300 font-medium">
+    💖 Designed for family trip | © sun0
+  </footer>
+
+  <!-- 복사 안내 토스트 -->
+  <div id="toast" class="toast-msg hidden">📋 한자 주소가 복사되었습니다! (지도에 붙여넣으세요)</div>
+
   <!-- 모달 -->
-  <div id="modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-lg max-w-sm w-full p-4 space-y-3 shadow-xl text-xs">
-      <h3 id="modal-title" class="font-bold border-b pb-1.5 text-slate-800 text-sm">항목 추가/수정</h3>
+  <div id="modal" class="fixed inset-0 bg-black/40 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-4 space-y-3 shadow-xl text-xs border border-pink-100 relative">
+      <h3 id="modal-title" class="font-bold border-b border-pink-100 pb-2 text-rose-500 text-sm flex items-center gap-1">✨ 항목 편집하기</h3>
       
       <!-- 일정 모달 폼 -->
       <form id="form-schedule" class="space-y-2 hidden">
         <div>
-          <label class="block font-semibold text-slate-600 mb-0.5">일차 (숫자)</label>
-          <input type="number" id="sc-day" min="1" value="1" class="w-full border rounded p-1.5">
+          <label class="block font-semibold text-slate-500 mb-0.5">일차 (숫자)</label>
+          <input type="number" id="sc-day" min="1" value="1" class="w-full border border-pink-200 rounded-lg p-1.5 focus:outline-pink-400">
         </div>
         <div>
-          <label class="block font-semibold text-slate-600 mb-0.5">시간 및 제목</label>
-          <input type="text" id="sc-title" placeholder="예: [19:30] 동강 숙소 체크인" class="w-full border rounded p-1.5">
+          <label class="block font-semibold text-slate-500 mb-0.5">시간 및 제목</label>
+          <input type="text" id="sc-title" placeholder="예: [19:30] 🏨 동강 숙소 체크인" class="w-full border border-pink-200 rounded-lg p-1.5 focus:outline-pink-400">
         </div>
         <div>
-          <label class="block font-semibold text-slate-600 mb-0.5">주소/위치 (지도검색용)</label>
-          <input type="text" id="sc-addr" placeholder="중문 주소 입력" class="w-full border rounded p-1.5">
+          <label class="block font-semibold text-slate-500 mb-0.5">중문 주소 (클릭 시 복사됨)</label>
+          <input type="text" id="sc-addr" placeholder="예: 壹刻壹家酒店(大连东港店)" class="w-full border border-pink-200 rounded-lg p-1.5 focus:outline-pink-400">
         </div>
         <div>
-          <label class="block font-semibold text-slate-600 mb-0.5">이동 정보</label>
-          <input type="text" id="sc-trans" placeholder="예: 🚕 택시 | 약 10분" class="w-full border rounded p-1.5">
+          <label class="block font-semibold text-slate-500 mb-0.5">이동 수단</label>
+          <input type="text" id="sc-trans" placeholder="예: 🚕 택시 | 약 10분" class="w-full border border-pink-200 rounded-lg p-1.5 focus:outline-pink-400">
         </div>
         <div>
-          <label class="block font-semibold text-slate-600 mb-0.5">메모/꿀팁</label>
-          <textarea id="sc-tip" placeholder="참고 메모" class="w-full border rounded p-1.5 h-14"></textarea>
+          <label class="block font-semibold text-slate-500 mb-0.5">꿀팁 / 메모</label>
+          <textarea id="sc-tip" placeholder="참고할 메모 입력" class="w-full border border-pink-200 rounded-lg p-1.5 h-14 focus:outline-pink-400"></textarea>
         </div>
       </form>
 
       <!-- 장소 모달 폼 -->
       <form id="form-place" class="space-y-2 hidden">
         <div>
-          <label class="block font-semibold text-slate-600 mb-0.5">장소명</label>
-          <input type="text" id="pl-title" placeholder="예: 喜鼎海胆水饺" class="w-full border rounded p-1.5">
+          <label class="block font-semibold text-slate-500 mb-0.5">장소명</label>
+          <input type="text" id="pl-title" placeholder="장소명 입력" class="w-full border border-pink-200 rounded-lg p-1.5">
         </div>
         <div>
-          <label class="block font-semibold text-slate-600 mb-0.5">카테고리</label>
-          <input type="text" id="pl-cat" placeholder="예: 맛집 / 명소 / 쇼핑" class="w-full border rounded p-1.5">
+          <label class="block font-semibold text-slate-500 mb-0.5">카테고리</label>
+          <input type="text" id="pl-cat" placeholder="맛집 / 쇼핑 / 온천 등" class="w-full border border-pink-200 rounded-lg p-1.5">
         </div>
         <div>
-          <label class="block font-semibold text-slate-600 mb-0.5">주소</label>
-          <input type="text" id="pl-addr" placeholder="중문 주소" class="w-full border rounded p-1.5">
+          <label class="block font-semibold text-slate-500 mb-0.5">중문 주소</label>
+          <input type="text" id="pl-addr" placeholder="중문 주소 입력" class="w-full border border-pink-200 rounded-lg p-1.5">
         </div>
         <div>
-          <label class="block font-semibold text-slate-600 mb-0.5">메모/팁</label>
-          <textarea id="pl-tip" placeholder="추천 메뉴 등" class="w-full border rounded p-1.5 h-14"></textarea>
+          <label class="block font-semibold text-slate-500 mb-0.5">메모/팁</label>
+          <textarea id="pl-tip" placeholder="꿀팁 입력" class="w-full border border-pink-200 rounded-lg p-1.5 h-14"></textarea>
         </div>
       </form>
 
-      <!-- 회화 모달 폼 -->
-      <form id="form-speech" class="space-y-2 hidden">
-        <div>
-          <label class="block font-semibold text-slate-600 mb-0.5">한국어</label>
-          <input type="text" id="sp-kor" placeholder="예: 고수 넣지 말아주세요" class="w-full border rounded p-1.5">
+      <!-- 회화 모달 폼 (자동완성 추천 기능 적용) -->
+      <form id="form-speech" class="space-y-2 hidden relative">
+        <div class="relative">
+          <label class="block font-semibold text-slate-500 mb-0.5">한국어 검색 (입력 시 추천어 자동완성)</label>
+          <input type="text" id="sp-kor" oninput="handleAutoComplete(this.value)" autocomplete="off" placeholder="예: 고수, 얼마, 택시, 화장실..." class="w-full border border-pink-200 rounded-lg p-1.5 focus:outline-pink-400">
+          
+          <!-- 자동완성 리스트 레이어 -->
+          <div id="autocomplete-list" class="absolute left-0 right-0 top-full bg-white border border-pink-200 rounded-b-lg shadow-lg max-h-36 overflow-y-auto hidden z-50"></div>
         </div>
         <div>
-          <label class="block font-semibold text-slate-600 mb-0.5">중국어 (한자)</label>
-          <input type="text" id="sp-cn" placeholder="예: 不要香菜" class="w-full border rounded p-1.5">
+          <label class="block font-semibold text-slate-500 mb-0.5">중국어 (한자)</label>
+          <input type="text" id="sp-cn" placeholder="예: 不要香菜" class="w-full border border-pink-200 rounded-lg p-1.5">
         </div>
         <div>
-          <label class="block font-semibold text-slate-600 mb-0.5">발음</label>
-          <input type="text" id="sp-py" placeholder="예: 부야오 샹차이" class="w-full border rounded p-1.5">
+          <label class="block font-semibold text-slate-500 mb-0.5">발음 안내</label>
+          <input type="text" id="sp-py" placeholder="예: 부야오 샹차이" class="w-full border border-pink-200 rounded-lg p-1.5">
         </div>
         <div>
-          <label class="block font-semibold text-slate-600 mb-0.5">상황</label>
-          <input type="text" id="sp-tip" placeholder="예: 식당 주문 시" class="w-full border rounded p-1.5">
+          <label class="block font-semibold text-slate-500 mb-0.5">상황 카테고리 (식당/교통/호텔/쇼핑/기타)</label>
+          <input type="text" id="sp-tip" placeholder="예: 식당" class="w-full border border-pink-200 rounded-lg p-1.5">
         </div>
       </form>
 
-      <div class="flex justify-end gap-1.5 pt-2 border-t">
-        <button onclick="closeModal()" class="px-2.5 py-1 text-slate-600 bg-slate-100 rounded hover:bg-slate-200">취소</button>
-        <button onclick="saveData()" class="px-2.5 py-1 text-white bg-indigo-600 rounded hover:bg-indigo-700">저장</button>
+      <div class="flex justify-end gap-1.5 pt-2 border-t border-pink-100">
+        <button onclick="closeModal()" class="px-3 py-1 text-slate-500 bg-slate-100 rounded-full hover:bg-slate-200">취소</button>
+        <button onclick="saveData()" class="px-3 py-1 text-white bg-rose-400 rounded-full hover:bg-rose-500">저장 💕</button>
       </div>
     </div>
   </div>
@@ -178,7 +206,7 @@
     }
     const db = firebase.database();
 
-    // 원본 데이터
+    // 원본 데이터 (회화 데이터 상황별 대폭 강화)
     const initialSchedules = [
       { day: 1, title: "[19:30] 🏨 동강 숙소 체크인", addr: "壹刻壹家酒店(大连东港店)", trans: "🚕 택시 | 약 10분", tip: "동강 1박 숙소 도착 후 짐 정리" },
       { day: 1, title: "[20:30] 🍗 저녁: 喝丢一只鞋 (인민로점)", addr: "中山区 人民路 附近", trans: "🏃‍♂️ 도보 | 약 10~15분", tip: "양꼬치 주문 시 츠란 제거 요청! (不要孜然!)" },
@@ -213,29 +241,49 @@
     ];
 
     const initialSpeech = [
-      { kor: "쯔란(향신료) 넣지 마세요", cn: "不要孜然", py: "부야오 쯔란", tip: "양꼬치 주문 시" },
-      { kor: "고수 넣지 마세요", cn: "不要香菜", py: "부야오 샹차이", tip: "음식 주문 시" },
-      { kor: "안 매운 것으로 주세요", cn: "要不辣", py: "야오 부 라", tip: "아이 음식" },
-      { kor: "영수증 부탁합니다", cn: "请给我发票", py: "칭 게이 워 파피아오", tip: "결제 시" },
-      { kor: "이 주소로 가주세요", cn: "请带我去这个地方", py: "칭 다이 워 취 저거 디팡", tip: "택시 탑승 시" },
-      { kor: "짐 보관할 수 있나요?", cn: "可以寄存行李吗？", py: "커이 지춘 싱리 마?", tip: "호텔/리조트" }
+      { kor: "고수 넣지 마세요", cn: "不要香菜", py: "부야오 샹차이", tip: "식당" },
+      { kor: "츠란(향신료) 넣지 마세요", cn: "不要孜然", py: "부야오 쯔란", tip: "식당" },
+      { kor: "안 매운 것으로 주세요", cn: "要不辣的", py: "야오 부 라 더", tip: "식당" },
+      { kor: "계산할게요 / 영수증 주세요", cn: "买单 / 买单，请给我发票", py: "마이단 / 칭 게이 워 파피아오", tip: "식당" },
+      { kor: "이 주소로 가주세요", cn: "请带我去这个地方", py: "칭 다이 워 취 저거 디팡", tip: "교통" },
+      { kor: "트렁크 좀 열어주세요", cn: "请打开后备箱", py: "칭 다카이 호우베이샹", tip: "교통" },
+      { kor: "짐을 보관할 수 있나요?", cn: "可以寄存行李吗？", py: "커이 지춘 싱리 마?", tip: "호텔" },
+      { kor: "체크아웃 하겠습니다", cn: "我要退房", py: "워 야오 투이팡", tip: "호텔" },
+      { kor: "얼마인가요?", cn: "多少钱？", py: "두오샤오 치엔?", tip: "쇼핑" },
+      { kor: "깍아주세요 / 싸게 해주세요", cn: "便宜一点吧", py: "피엔이 이디엔 바", tip: "쇼핑" },
+      { kor: "화장실이 어디인가요?", cn: "洗手间在哪里？", py: "시쇼우지엔 자이 나리?", tip: "기타/긴급" },
+      { kor: "도와주세요!", cn: "救命 / 请帮帮我", py: "찌우밍 / 칭 빵빵워", tip: "기타/긴급" }
+    ];
+
+    // 자동완성 데이터베이스 (사전)
+    const dictionary = [
+      { kor: "고수 넣지 마세요", cn: "不要香菜", py: "부야오 샹차이", tip: "식당" },
+      { kor: "츠란 빼주세요", cn: "不要孜然", py: "부야오 쯔란", tip: "식당" },
+      { kor: "안 매운 걸로 주세요", cn: "要不辣的", py: "야오 부 라 더", tip: "식당" },
+      { kor: "물 좀 주세요", cn: "请给我水", py: "칭 게이 워 슈이", tip: "식당" },
+      { kor: "메뉴판 보여주세요", cn: "请给我菜单", py: "칭 게이 워 차이단", tip: "식당" },
+      { kor: "계산해 주세요", cn: "买单", py: "마이단", tip: "식당" },
+      { kor: "이 주소로 가주세요", cn: "请带我去这个地方", py: "칭 다이 워 취 저거 디팡", tip: "교통" },
+      { kor: "여기서 세워주세요", cn: "请在这里停一下", py: "칭 자이 저리 팅 이시아", tip: "교통" },
+      { kor: "얼마인가요?", cn: "多少钱？", py: "두오샤오 치엔?", tip: "쇼핑" },
+      { kor: "너무 비싸요", cn: "太贵了", py: "타이 꾸이 러", tip: "쇼핑" },
+      { kor: "화장실 어디예요?", cn: "洗手间在哪里？", py: "시쇼우지엔 자이 나리?", tip: "기타/긴급" },
+      { kor: "짐 보관 되나요?", cn: "可以寄存行李吗？", py: "커이 지춘 싱리 마?", tip: "호텔" },
+      { kor: "와이파이 비번이 뭐예요?", cn: "WiFi密码是什么？", py: "와이파이 미마 시什머?", tip: "호텔" }
     ];
 
     let currentSchedules = {};
     let currentPlaces = {};
     let currentSpeech = {};
+    let previousSchedules = null;
+    let currentSpeechCategory = '전체';
     let currentModalType = 'schedule';
     let editKey = null;
 
-    // 🔥 Firebase 실시간 바인딩 (안전한 set 방식 적용)
+    // 🔥 Firebase 실시간 바인딩
     db.ref("schedules").on("value", (snapshot) => {
       const data = snapshot.val();
-      if (!data) {
-        const obj = {};
-        initialSchedules.forEach(item => obj[db.ref("schedules").push().key] = item);
-        db.ref("schedules").set(obj);
-        return;
-      }
+      if (!data) { resetToInitialData(); return; }
       currentSchedules = data;
       renderSchedules();
     });
@@ -264,9 +312,78 @@
       renderSpeech();
     });
 
-    // 🔄 기본 데이터 전체 복구
+    // 🔍 자동완성 기능 처리
+    function handleAutoComplete(val) {
+      const listContainer = document.getElementById('autocomplete-list');
+      if (!val.trim()) {
+        listContainer.classList.add('hidden');
+        return;
+      }
+
+      const matches = dictionary.filter(item => item.kor.includes(val) || item.tip.includes(val));
+      if (matches.length === 0) {
+        listContainer.classList.add('hidden');
+        return;
+      }
+
+      listContainer.innerHTML = '';
+      matches.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'p-2 hover:bg-pink-50 cursor-pointer border-b border-pink-50 flex justify-between items-center text-[11px]';
+        div.innerHTML = `
+          <div>
+            <span class="font-bold text-slate-700">${item.kor}</span>
+            <span class="text-rose-500 font-semibold ml-1">(${item.cn})</span>
+          </div>
+          <span class="text-[9px] bg-pink-100 text-pink-600 px-1.5 py-0.5 rounded-full">${item.tip}</span>
+        `;
+        div.onclick = () => {
+          document.getElementById('sp-kor').value = item.kor;
+          document.getElementById('sp-cn').value = item.cn;
+          document.getElementById('sp-py').value = item.py;
+          document.getElementById('sp-tip').value = item.tip;
+          listContainer.classList.add('hidden');
+        };
+        listContainer.appendChild(div);
+      });
+      listContainer.classList.remove('hidden');
+    }
+
+    // 🔊 음성 재생
+    function speakChinese(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'zh-CN';
+        utterance.rate = 0.85;
+        window.speechSynthesis.speak(utterance);
+      } else {
+        alert("이 브라우저에서는 음성 재생을 지원하지 않습니다.");
+      }
+    }
+
+    // 📋 주소 복사
+    function copyToClipboard(text) {
+      if (!text) return;
+      navigator.clipboard.writeText(text).then(() => {
+        const toast = document.getElementById('toast');
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 2000);
+      });
+    }
+
+    // 🔄 되돌리기
+    function undoLastEdit() {
+      if (previousSchedules) {
+        db.ref("schedules").set(previousSchedules);
+        previousSchedules = null;
+        alert("이전 상태로 되돌렸습니다!");
+      }
+    }
+
+    // 🔄 원본 초기화
     function resetToInitialData() {
-      if (confirm("모든 일정을 원본 기본 일정으로 초기화하시겠습니까?")) {
+      if (confirm("모든 일정을 원본 기본 데이터로 복구하시겠습니까?")) {
         const schObj = {}, plObj = {}, spObj = {};
         initialSchedules.forEach(item => schObj[db.ref("schedules").push().key] = item);
         initialPlaces.forEach(item => plObj[db.ref("places").push().key] = item);
@@ -275,7 +392,6 @@
         db.ref("schedules").set(schObj);
         db.ref("places").set(plObj);
         db.ref("speech").set(spObj);
-        alert("복구되었습니다!");
       }
     }
 
@@ -284,20 +400,34 @@
       ['schedule', 'places', 'speech'].forEach(t => {
         document.getElementById(`sec-${t}`).classList.add('hidden');
         document.getElementById(`tab-${t}`).classList.remove('active-tab');
-        document.getElementById(`tab-${t}`).classList.add('text-slate-500');
+        document.getElementById(`tab-${t}`).classList.add('text-slate-400');
       });
       document.getElementById(`sec-${type}`).classList.remove('hidden');
       document.getElementById(`tab-${type}`).classList.add('active-tab');
-      document.getElementById(`tab-${type}`).classList.remove('text-slate-500');
+      document.getElementById(`tab-${type}`).classList.remove('text-slate-400');
     }
 
-    // 1. 일정 렌더링 (축소형 레이아웃)
+    // 회화 카테고리 필터링
+    function filterSpeech(cat) {
+      currentSpeechCategory = cat;
+      const btns = document.querySelectorAll('.sp-cat-btn');
+      btns.forEach(btn => {
+        if (btn.innerText.includes(cat)) {
+          btn.className = "sp-cat-btn bg-pink-500 text-white px-2.5 py-1 rounded-full shrink-0 font-medium";
+        } else {
+          btn.className = "sp-cat-btn bg-white text-slate-500 border border-pink-100 px-2.5 py-1 rounded-full shrink-0";
+        }
+      });
+      renderSpeech();
+    }
+
+    // 1. 일정 렌더링
     function renderSchedules() {
       const container = document.getElementById('schedule-list');
       container.innerHTML = '';
 
-      if (Object.keys(currentSchedules).length === 0) {
-        container.innerHTML = `<div class="text-center py-8 text-slate-400 text-xs">일정이 없습니다.</div>`;
+      if (!currentSchedules || Object.keys(currentSchedules).length === 0) {
+        container.innerHTML = `<div class="text-center py-8 text-pink-300 text-xs">등록된 일정이 없습니다.</div>`;
         return;
       }
 
@@ -310,29 +440,31 @@
         if (currentDay !== item.day) {
           currentDay = item.day;
           const dayHeader = document.createElement('div');
-          dayHeader.className = 'font-bold text-xs text-indigo-600 border-b border-indigo-200 pb-0.5 mt-3 mb-1.5 flex items-center gap-1';
-          dayHeader.innerHTML = `<i class="fa-solid fa-plane-departure"></i> DAY ${currentDay}`;
+          dayHeader.className = 'font-bold text-xs text-rose-500 pb-0.5 mt-3 mb-1 flex items-center justify-between border-b border-pink-200';
+          dayHeader.innerHTML = `
+            <span>🌸 DAY ${currentDay}</span>
+            ${previousSchedules ? `<button onclick="undoLastEdit()" class="text-[10px] text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full font-normal">↩️ 수정 되돌리기</button>` : ''}
+          `;
           container.appendChild(dayHeader);
         }
 
         const card = document.createElement('div');
-        card.className = 'bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm space-y-1 text-xs';
-        const mapUrl = item.addr ? `https://uri.amap.com/search?keyword=${encodeURIComponent(item.addr)}` : '#';
+        card.className = 'bg-white p-3 cute-card border border-pink-50 space-y-1.5 text-xs';
 
         card.innerHTML = `
           <div class="flex justify-between items-start gap-1">
             <h3 class="font-bold text-slate-800 text-xs leading-snug">${item.title || ''}</h3>
-            <div class="flex gap-1 text-slate-300 text-[11px] shrink-0">
-              <button onclick="editItem('schedule', '${key}')" class="hover:text-indigo-600"><i class="fa-solid fa-pen"></i></button>
-              <button onclick="deleteData('schedules', '${key}')" class="hover:text-red-500"><i class="fa-solid fa-trash"></i></button>
+            <div class="flex gap-1.5 text-pink-300 text-[11px] shrink-0">
+              <button onclick="editItem('schedule', '${key}')" class="hover:text-pink-500"><i class="fa-solid fa-pen"></i></button>
+              <button onclick="deleteData('schedules', '${key}')" class="hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
             </div>
           </div>
-          ${item.trans ? `<div class="text-[11px] text-slate-500"><i class="fa-solid fa-car text-indigo-400 mr-1"></i>${item.trans}</div>` : ''}
-          ${item.tip ? `<div class="bg-amber-50 text-amber-900 text-[11px] p-1.5 rounded flex items-start gap-1"><i class="fa-regular fa-lightbulb text-amber-500 mt-0.5 shrink-0"></i><div>${item.tip}</div></div>` : ''}
+          ${item.trans ? `<div class="text-[11px] text-slate-500 flex items-center gap-1"><i class="fa-solid fa-car text-rose-300"></i> ${item.trans}</div>` : ''}
+          ${item.tip ? `<div class="bg-rose-50/70 text-rose-900 text-[11px] p-2 rounded-xl flex items-start gap-1"><i class="fa-solid fa-heart text-pink-400 mt-0.5 text-[9px]"></i><div>${item.tip}</div></div>` : ''}
           ${item.addr ? `
-            <div class="flex justify-between items-center pt-0.5 text-[10px] text-slate-400">
-              <span class="truncate max-w-[200px]"><i class="fa-solid fa-location-dot mr-0.5"></i>${item.addr}</span>
-              <a href="${mapUrl}" target="_blank" class="text-sky-600 bg-sky-50 px-1.5 py-0.5 rounded font-medium shrink-0">지도 <i class="fa-solid fa-chevron-right text-[8px]"></i></a>
+            <div onclick="copyToClipboard('${item.addr}')" class="bg-pink-50/50 hover:bg-pink-100/60 p-1.5 rounded-lg text-[10px] text-pink-600 font-medium flex justify-between items-center cursor-pointer transition-all">
+              <span class="truncate max-w-[230px]">📍 ${item.addr}</span>
+              <span class="text-[9px] bg-white px-1.5 py-0.5 rounded-md shadow-xs shrink-0">중문 복사 📋</span>
             </div>
           ` : ''}
         `;
@@ -348,25 +480,24 @@
       Object.keys(currentPlaces).forEach(key => {
         const item = currentPlaces[key];
         const card = document.createElement('div');
-        card.className = 'bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm space-y-1 text-xs';
-        const mapUrl = item.addr ? `https://uri.amap.com/search?keyword=${encodeURIComponent(item.addr)}` : '#';
+        card.className = 'bg-white p-3 cute-card border border-pink-50 space-y-1.5 text-xs';
 
         card.innerHTML = `
           <div class="flex justify-between items-start">
             <div class="flex items-center gap-1.5">
-              <span class="text-[9px] bg-indigo-50 text-indigo-600 px-1.5 py-0.5 rounded font-semibold">${item.cat || '장소'}</span>
+              <span class="text-[9px] bg-pink-100 text-pink-600 px-1.5 py-0.5 rounded-full font-bold">${item.cat || '장소'}</span>
               <h3 class="font-bold text-slate-800 text-xs">${item.title || ''}</h3>
             </div>
-            <div class="flex gap-1 text-slate-300 text-[11px]">
-              <button onclick="editItem('place', '${key}')" class="hover:text-indigo-600"><i class="fa-solid fa-pen"></i></button>
-              <button onclick="deleteData('places', '${key}')" class="hover:text-red-500"><i class="fa-solid fa-trash"></i></button>
+            <div class="flex gap-1.5 text-pink-300 text-[11px]">
+              <button onclick="editItem('place', '${key}')" class="hover:text-pink-500"><i class="fa-solid fa-pen"></i></button>
+              <button onclick="deleteData('places', '${key}')" class="hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
             </div>
           </div>
-          ${item.tip ? `<div class="bg-amber-50 text-amber-900 text-[11px] p-1.5 rounded">${item.tip}</div>` : ''}
+          ${item.tip ? `<div class="bg-rose-50/70 text-rose-900 text-[11px] p-2 rounded-xl">${item.tip}</div>` : ''}
           ${item.addr ? `
-            <div class="flex justify-between items-center pt-0.5 text-[10px] text-slate-400">
-              <span class="truncate max-w-[200px]">${item.addr}</span>
-              <a href="${mapUrl}" target="_blank" class="text-sky-600 bg-sky-50 px-1.5 py-0.5 rounded font-medium shrink-0">지도 <i class="fa-solid fa-chevron-right text-[8px]"></i></a>
+            <div onclick="copyToClipboard('${item.addr}')" class="bg-pink-50/50 hover:bg-pink-100/60 p-1.5 rounded-lg text-[10px] text-pink-600 font-medium flex justify-between items-center cursor-pointer">
+              <span class="truncate max-w-[230px]">${item.addr}</span>
+              <span class="text-[9px] bg-white px-1.5 py-0.5 rounded-md shadow-xs shrink-0">주소 복사 📋</span>
             </div>
           ` : ''}
         `;
@@ -374,27 +505,40 @@
       });
     }
 
-    // 3. 회화 렌더링
+    // 3. 회화 렌더링 (상황별 필터링 포함)
     function renderSpeech() {
       const container = document.getElementById('speech-list');
       container.innerHTML = '';
 
       Object.keys(currentSpeech).forEach(key => {
         const item = currentSpeech[key];
+        
+        // 카테고리 필터링
+        if (currentSpeechCategory !== '전체' && !(item.tip || '').includes(currentSpeechCategory)) {
+          return;
+        }
+
         const card = document.createElement('div');
-        card.className = 'bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm space-y-0.5 text-xs';
+        card.className = 'bg-white p-3 cute-card border border-pink-50 space-y-1 text-xs';
 
         card.innerHTML = `
           <div class="flex justify-between items-center">
-            <span class="text-[9px] bg-emerald-50 text-emerald-600 font-semibold px-1.5 py-0.5 rounded">${item.tip || '회화'}</span>
-            <div class="flex gap-1 text-slate-300 text-[11px]">
-              <button onclick="editItem('speech', '${key}')" class="hover:text-indigo-600"><i class="fa-solid fa-pen"></i></button>
-              <button onclick="deleteData('speech', '${key}')" class="hover:text-red-500"><i class="fa-solid fa-trash"></i></button>
+            <span class="text-[9px] bg-purple-100 text-purple-600 font-bold px-2 py-0.5 rounded-full">${item.tip || '일반'}</span>
+            <div class="flex gap-1.5 text-pink-300 text-[11px]">
+              <button onclick="editItem('speech', '${key}')" class="hover:text-pink-500"><i class="fa-solid fa-pen"></i></button>
+              <button onclick="deleteData('speech', '${key}')" class="hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
             </div>
           </div>
-          <div class="font-bold text-slate-800">${item.kor || ''}</div>
-          <div class="text-indigo-600 font-bold text-sm leading-tight">${item.cn || ''}</div>
-          <div class="text-[11px] text-slate-500">${item.py || ''}</div>
+          <div class="font-bold text-slate-700 text-xs mt-1">${item.kor || ''}</div>
+          <div class="flex items-center justify-between bg-pink-50/60 p-2 rounded-xl">
+            <div>
+              <div class="text-rose-500 font-bold text-sm">${item.cn || ''}</div>
+              <div class="text-[10px] text-slate-400">${item.py || ''}</div>
+            </div>
+            <button onclick="speakChinese('${item.cn}')" class="bg-white p-2 rounded-full shadow-xs text-pink-500 hover:bg-pink-100 text-sm flex items-center justify-center w-8 h-8">
+              🔊
+            </button>
+          </div>
         `;
         container.appendChild(card);
       });
@@ -402,7 +546,8 @@
 
     // 삭제
     function deleteData(path, key) {
-      if (confirm("이 항목을 삭제하시겠습니까?")) {
+      if (confirm("정말 이 항목을 삭제하시겠습니까?")) {
+        if (path === 'schedules') previousSchedules = JSON.parse(JSON.stringify(currentSchedules));
         db.ref(`${path}/${key}`).remove();
       }
     }
@@ -415,6 +560,7 @@
         document.getElementById(`form-${t}`).classList.add('hidden');
         document.getElementById(`form-${t}`).reset();
       });
+      document.getElementById('autocomplete-list').classList.add('hidden');
       document.getElementById(`form-${type}`).classList.remove('hidden');
       document.getElementById('modal').classList.remove('hidden');
     }
@@ -423,7 +569,7 @@
       document.getElementById('modal').classList.add('hidden');
     }
 
-    // 수정 모달 데이터 바인딩
+    // 수정 데이터 바인딩
     function editItem(type, key) {
       editKey = key;
       openModal(type);
@@ -450,9 +596,10 @@
       }
     }
 
-    // 데이터 저장
+    // 저장
     function saveData() {
       if (currentModalType === 'schedule') {
+        previousSchedules = JSON.parse(JSON.stringify(currentSchedules));
         const payload = {
           day: parseInt(document.getElementById('sc-day').value) || 1,
           title: document.getElementById('sc-title').value.trim(),
@@ -478,7 +625,7 @@
           kor: document.getElementById('sp-kor').value.trim(),
           cn: document.getElementById('sp-cn').value.trim(),
           py: document.getElementById('sp-py').value.trim(),
-          tip: document.getElementById('sp-tip').value.trim()
+          tip: document.getElementById('sp-tip').value.trim() || '기타'
         };
         if (editKey) db.ref(`speech/${editKey}`).update(payload);
         else db.ref('speech').push(payload);
