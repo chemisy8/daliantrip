@@ -57,9 +57,14 @@
         <h2 class="text-base font-bold text-gray-800 flex items-center gap-2">
           <i class="fa-solid fa-route text-indigo-500"></i> 시간대별 이동 동선
         </h2>
-        <button onclick="openModal('schedule')" class="bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white px-3 py-1.5 rounded-full text-xs font-semibold shadow-md shadow-indigo-200 transition">
-          <i class="fa-solid fa-plus mr-1"></i> 일정 추가
-        </button>
+        <div class="flex gap-1.5">
+          <button onclick="resetToNewDefault()" class="bg-gray-100 hover:bg-gray-200 text-gray-600 px-2.5 py-1.5 rounded-full text-xs font-medium transition">
+            <i class="fa-solid fa-rotate-left mr-1"></i> 일정 초기화
+          </button>
+          <button onclick="openModal('schedule')" class="bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white px-3 py-1.5 rounded-full text-xs font-semibold shadow-md shadow-indigo-200 transition">
+            <i class="fa-solid fa-plus mr-1"></i> 일정 추가
+          </button>
+        </div>
       </div>
 
       <div id="schedule-container" class="space-y-4">
@@ -199,7 +204,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // 여행 회화 자동완성용 데이터베이스
+    // 회화 검색 사전
     const speechDictionary = [
       { kr: "고수 넣지 말아주세요 🌿", cn: "不要香菜", py: "부야오 씨앙차이" },
       { kr: "고수 따로 주세요 🌿", cn: "香菜另外放", py: "씨앙차이 링와이 팡" },
@@ -207,7 +212,7 @@
       { kr: "매지 않게 해주세요 🙅‍♂️", cn: "不要辣", py: "부야오 라" },
       { kr: "어린이용 의자 있나요? 👶", cn: "有儿童椅子吗？", py: "요우 얼퉁 이쯔 마?" },
       { kr: "따뜻한 물 부탁합니다 ☕", cn: "请给我热水", py: "칭 게이 워 러슈에이" },
-      { kr: "차 가운 물 부탁합니다 🧊", cn: "请给我冰水", py: "칭 게이 워 빙슈에이" },
+      { kr: "차가운 물 부탁합니다 🧊", cn: "请给我冰水", py: "칭 게이 워 빙슈에이" },
       { kr: "메뉴판 좀 주세요 📖", cn: "请给我菜单", py: "칭 게이 워 차이단" },
       { kr: "이것으로 주세요 👉", cn: "我要这个", py: "워 야오 쩌거" },
       { kr: "계산해 주세요 💳", cn: "买单 / 结账", py: "마이딴 / 지에짱" },
@@ -229,8 +234,8 @@
       { kr: "와이파이 비번이 뭔가요? 📶", cn: "WiFi密码是什么？", py: "와이파이 미마 시 스셔머?" }
     ];
 
-    // 기본 일정 데이터
-    const defaultSchedules = [
+    // 새 상세 일정 데이터 (시간대, 주소, 택시/도보, 블로그 팁 포함)
+    const newSchedules = [
       { day: "1일차", title: "[12:30] 다롄 저우수이쯔 국제공항 (大连周水子国际机场)", addr: "甘井子区 迎客路 100号", trans: "✈️ 한국 출발 후 도착 / 입국 수속", desc: "💡 [꿀팁] 입국 심사 시 가족 단체 라인 활용, 디디(DiDi) 앱으로 호출 시 공항 P2 주차장에서 승차" },
       { day: "1일차", title: "[14:00] 숙소 체크인 및 짐 보관", addr: "성해광장 근처 (沙河口区 中山路)", trans: "🚕 택시 약 25~30분 (약 35~40元)", desc: "💡 [꿀팁] 아이 컨디션 조절을 위해 체크인 후 30분 휴식 권장" },
       { day: "1일차", title: "[16:30] 성해광장 (星海广场)", addr: "沙河口区 中山路 572号", trans: "🚶 도보 이동 (또는 택시 5분)", desc: "💡 [꿀팁] 아시아 최대 광장! 갈매기 모이주기 체험 인기. 바닷바람이 강해 유아용 바람막이 겉옷 필수" },
@@ -264,7 +269,7 @@
       { kr: "택시 승강장이 어디인가요? 🚖", cn: "出租车乘车点在哪儿？", py: "추쭈처 청처뎬 자이나얼?" },
       { kr: "이 주소로 가주세요 📍", cn: "请带我去这个地址", py: "칭 따이 워 취 쩌거 디즈" },
       { kr: "미터기 켜주세요 ⏱️", cn: "请打表", py: "칭 타뱌오" },
-      { kr: "얼마인가요? 💰", cn: "多少钱？", py: "두어샤오 치엔?" },
+      { kr: "얼마인가요? 💰", cn: "多少钱？", py: "두어샤오 치엔？" },
       { kr: "화장실이 어디인가요? 🚻", cn: "洗手间在哪儿？", py: "씨쇼우지에 자이나얼?" },
       { kr: "감사합니다 / 천만에요 😊", cn: "谢谢 / 不客气", py: "셰셰 / 부커치" }
     ];
@@ -273,12 +278,23 @@
     let currentPlaces = {};
     let currentSpeech = {};
 
+    // 데이터 수신 및 자동으로 구버전 데이터 업데이트
     db.ref("schedules").on("value", (snapshot) => {
       const data = snapshot.val();
       if (!data) {
-        defaultSchedules.forEach(s => db.ref("schedules").push(s));
+        newSchedules.forEach(s => db.ref("schedules").push(s));
         return;
       }
+      
+      // 구버전(주소 데이터 없음) 데이터 검출 시 강제 최신 데이터로 업그레이드
+      const hasOldVersion = Object.values(data).some(item => !item.addr);
+      if (hasOldVersion) {
+        db.ref("schedules").remove().then(() => {
+          newSchedules.forEach(s => db.ref("schedules").push(s));
+        });
+        return;
+      }
+
       currentSchedules = data;
       renderSchedules();
     });
@@ -302,6 +318,14 @@
       currentSpeech = data;
       renderSpeech();
     });
+
+    function resetToNewDefault() {
+      if (confirm("일정을 디테일 버전으로 다시 불러오시겠습니까?")) {
+        db.ref("schedules").remove().then(() => {
+          newSchedules.forEach(s => db.ref("schedules").push(s));
+        });
+      }
+    }
 
     function renderSchedules() {
       const container = document.getElementById("schedule-container");
@@ -424,7 +448,6 @@
       });
     }
 
-    // 회화 검색 시 자동완성 로직
     function onSpeechKrInput(val) {
       const box = document.getElementById("speech-autocomplete");
       const keyword = val.trim().toLowerCase();
