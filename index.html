@@ -12,7 +12,7 @@
   <!-- Tailwind CSS & FontAwesome -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
+
   <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
     body { font-family: 'Pretendard', sans-serif; background-color: #faf7f2; }
@@ -27,7 +27,7 @@
 </head>
 <body class="text-slate-700 min-h-screen flex flex-col">
 
-  <!-- 헤더 (소프트 오렌지/크림 스킨) -->
+  <!-- 헤더 -->
   <header class="bg-gradient-to-r from-amber-200 via-orange-200 to-amber-100 text-slate-800 px-4 py-3.5 sticky top-0 z-50 border-b border-orange-100">
     <div class="max-w-md mx-auto flex justify-between items-center">
       <h1 class="text-base font-bold flex items-center gap-1.5 text-orange-950">
@@ -82,6 +82,7 @@
         </div>
       </div>
 
+      <!-- 일정 목록 -->
       <div id="schedule-list" class="space-y-2.5"></div>
     </section>
 
@@ -119,14 +120,14 @@
 
   </main>
 
-  <!-- 저작권 푸터 (Copyright Footer) -->
+  <!-- 푸터 -->
   <footer class="mt-auto py-4 px-3 text-center text-[11px] text-orange-800/60 bg-amber-100/40 border-t border-orange-100/60">
     <p class="font-medium">🍊 Dalian Family Travel Guide</p>
-    <p class="text-[10px] text-slate-400 mt-0.5">©sun0. 2026. All Rights Reserved. Safe & Happy Trip! ✨</p>
+    <p class="text-[10px] text-slate-400 mt-0.5">© Safe & Happy Trip! ✨</p>
   </footer>
 
-  <!-- 복사 안내 토스트 -->
-  <div id="toast" class="toast-msg hidden">📋 가게 이름이 복사되었습니다!</div>
+  <!-- 복사 토스트 -->
+  <div id="toast" class="toast-msg hidden">📋 내용이 복사되었습니다!</div>
 
   <!-- 모달 창 -->
   <div id="modal" class="fixed inset-0 bg-black/30 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
@@ -144,7 +145,7 @@
           <input type="text" id="sc-title" placeholder="예: [19:30] 🏨 동강 숙소 체크인" class="w-full border border-orange-200 rounded-lg p-1.5 focus:outline-orange-400">
         </div>
         <div>
-          <label class="block font-semibold text-slate-500 mb-0.5">중문 가게/장소명 (클릭 시 복사됨)</label>
+          <label class="block font-semibold text-slate-500 mb-0.5">중문 가게/장소명 (복사 및 지도연동)</label>
           <input type="text" id="sc-store" placeholder="예: 壹刻壹家酒店(大连东港店)" class="w-full border border-orange-200 rounded-lg p-1.5 focus:outline-orange-400">
         </div>
         <div>
@@ -177,16 +178,19 @@
         </div>
       </div>
 
-      <!-- 회화 폼 (자동 채우기 적용) -->
+      <!-- 회화 폼 -->
       <div id="form-speech" class="space-y-2 hidden relative">
+        <button type="button" onclick="pasteFromClipboard()" class="w-full py-1.5 bg-amber-100 text-amber-800 font-bold rounded-lg text-xs hover:bg-amber-200 transition-colors border border-amber-300/60 flex items-center justify-center gap-1">
+          📋 복사한 텍스트 바로 가져오기
+        </button>
+
         <div>
           <label class="block font-semibold text-slate-500 mb-0.5">한국어 표현</label>
           <input type="text" id="sp-kor" placeholder="예: 고수, 얼마, 계산, 화장실 등" class="w-full border border-orange-200 rounded-lg p-1.5 focus:outline-orange-400">
         </div>
 
-        <!-- 🪄 자동 채우기 버튼 -->
-        <button type="button" onclick="autoFillChinese()" class="w-full py-1.5 bg-orange-100 text-orange-700 font-bold rounded-lg text-xs hover:bg-orange-200 transition-colors border border-orange-200">
-          🪄 한자/발음 자동 채우기
+        <button type="button" onclick="autoFillChinese()" class="w-full py-1 bg-orange-100 text-orange-700 font-bold rounded-lg text-[11px] hover:bg-orange-200 transition-colors border border-orange-200">
+          🪄 한자/발음 사전 자동 완성
         </button>
 
         <div>
@@ -194,7 +198,7 @@
           <input type="text" id="sp-cn" placeholder="예: 不要香菜" class="w-full border border-orange-200 rounded-lg p-1.5">
         </div>
         <div>
-          <label class="block font-semibold text-slate-500 mb-0.5">발음 안내</label>
+          <label class="block font-semibold text-slate-500 mb-0.5 text-slate-400">발음 안내 <span class="font-normal text-[10px] text-orange-500">(선택 입력)</span></label>
           <input type="text" id="sp-py" placeholder="예: 부야오 샹차이" class="w-full border border-orange-200 rounded-lg p-1.5">
         </div>
         <div>
@@ -221,73 +225,34 @@
     }
     const db = firebase.database();
 
-    // 여행용 중국어 내장 사전 데이터 (자동 채우기용)
+    // 내장 사전
     const speechDict = [
       { key: "고수", cn: "不要香菜", py: "부야오 샹차이", tip: "식당" },
       { key: "츠란", cn: "不要孜然", py: "부야오 쯔란", tip: "식당" },
       { key: "맵지", cn: "要不辣的", py: "야오 부 라 더", tip: "식당" },
-      { key: "안 매", cn: "要不辣的", py: "야오 부 라 더", tip: "식당" },
       { key: "계산", cn: "买单", py: "마이단", tip: "식당" },
-      { key: "메뉴", cn: "请给我菜单", py: "칭 게이 워 차이단", tip: "식당" },
-      { key: "물", cn: "请给我水", py: "칭 게이 워 슈이", tip: "식당" },
-      { key: "영수증", cn: "请给我小票", py: "칭 게이 워 시아오피아오", tip: "쇼핑" },
       { key: "가주세요", cn: "请带 me 去这个地方", py: "칭 다이 워 취 저거 디팡", tip: "교통" },
-      { key: "트렁크", cn: "请打开后备箱", py: "칭 다카이 호우베이샹", tip: "교통" },
-      { key: "짐", cn: "可以寄存行李吗？", py: "커이 지춘 싱리 마?", tip: "호텔" },
-      { key: "체크인", cn: "我要办理入住", py: "워 야오 반리 루주", tip: "호텔" },
-      { key: "얼마", cn: "多少钱？", py: "두오샤오 치엔?", tip: "쇼핑" },
-      { key: "깎아", cn: "便宜一点儿吧", py: "피엔이 이디어 바", tip: "쇼핑" },
-      { key: "화장실", cn: "洗手间在哪里？", py: "시쇼우지엔 자이 나리?", tip: "기타/긴급" },
-      { key: "도와", cn: "请帮帮我", py: "칭 빵빵워", tip: "기타/긴급" },
-      { key: "사진", cn: "能帮我拍照吗？", py: "넝 빵 워 파이쟈오 마?", tip: "기타/긴급" },
-      { key: "안녕", cn: "你好", py: "니하오", tip: "기타/긴급" },
-      { key: "감사", cn: "谢谢", py: "씨에씨에", tip: "기타/긴급" }
+      { key: "화장실", cn: "洗手间在哪里？", py: "시쇼우지엔 자이 나리?", tip: "기타/긴급" }
     ];
 
-    // 초기 데이터
     const initialSchedules = [
       { day: 1, title: "[19:30] 🏨 동강 숙소 체크인", storeName: "壹刻壹家酒店(大连东港店)", trans: "🚕 택시 | 약 10분", tip: "동강 1박 숙소 도착 후 짐 정리" },
       { day: 1, title: "[20:30] 🍗 저녁: 喝丢一只鞋 (인민로점)", storeName: "喝丢一只鞋(人民路店)", trans: "🏃‍♂️ 도보 | 약 10~15분", tip: "양꼬치 주문 시 츠란 제거 요청! (不要孜然!)" },
       { day: 1, title: "[21:30] 🌊 동방수성 (베니스 수운하)", storeName: "东方水城", trans: "🚕 택시 | 약 5~10분", tip: "야경 산책 후 동강 숙소 복귀 (1박)" },
-
       { day: 2, title: "[10:00] 🏨 인터컨티넨탈 호텔", storeName: "大连中远海运洲际酒店", trans: "🚕 택시 | 약 20~25분", tip: "연박 숙소에 미리 짐 보관" },
-      { day: 2, title: "[10:30] 🐬 대련 성해해양세계", storeName: "圣亚海洋世界", trans: "🏃‍♂️ 도보 | 약 5분", tip: "11:00 돌고래 쇼 필수 관람! 118m 해저터널" },
-      { day: 2, title: "[13:00] 🥟 점심: 喜鼎海胆水饺", storeName: "喜鼎海胆水饺(星海店)", trans: "🚕 택시 약 5~10분", tip: "성게알 만두 & 아이용 새우 만두 추천" },
-      { day: 2, title: "[14:30] ☕ Mangata Coffee", storeName: "Mangata Coffee", trans: "🏃‍♂️ 도보 | 약 5~10분", tip: "성해광장 오션뷰 카페 휴식" },
-      { day: 2, title: "[17:00] 🎡 성해광장", storeName: "星海广场", trans: "🏃‍♂️ 도보/택시 5분", tip: "선선한 시간대 미니 놀이동산 이용" },
-      { day: 2, title: "[18:30] 🦆 저녁: 新兴传承烤鸭", storeName: "新兴传承烤鸭", trans: "🏃‍♂️ 도보 | 약 5분", tip: "베이징덕/오리고기 추천" },
-      { day: 2, title: "[19:30] 🍻🎪 성해광장 야경 레이저쇼", storeName: "星海广场", trans: "🚕 택시 | 약 20~25분", tip: "분수&레이저쇼 감상 후 인터컨티넨탈 복귀" },
-
+      { day: 2, title: "[10:30] 🐬 대련 성해해양세계", storeName: "圣亚海洋世界", trans: "🏃‍♂️ 도보 | 약 5분", tip: "11:00 돌고래 쇼 필수 관람!" },
       { day: 3, title: "[10:30] 🏘️ 동관거리 (东关街)", storeName: "东关街", trans: "🏃‍♂️ 도보 이동", tip: "레트로 감성 고거리 사진 촬영" },
-      { day: 3, title: "[11:30] 🍕 점심: COMMUNE", storeName: "COMMUNE(东关街店)", trans: "🚃 201번 트램 약 15~20분", tip: "수제버거, 피자, 파스타" },
-      { day: 3, title: "[13:00] 🪆 러시아 풍정가", storeName: "俄罗斯风情街", trans: "🚕 택시 | 약 15~20분", tip: "러시아풍 건축물 및 스낵 거리 구경" },
-      { day: 3, title: "[14:30] 🛒 서안로 중앙대도", storeName: "中央大道旅游文化购物中心", trans: "🏃‍♂️ 실내 연결통로 도보", tip: "엄마: 네일아트 / 아빠+아이: 미니소, 키즈존, 마트" },
-      { day: 3, title: "[18:00] 🍢 저녁: 长兴里小吃街", storeName: "长兴里小吃街", trans: "🚕 택시 | 약 15~20분", tip: "탕후루, 철판오징어 등 야시장 탐방" },
-
-      { day: 4, title: "[10:00] 🏨 인터컨티넨탈 체크아웃", storeName: "大连中远海运洲际酒店", trans: "🚕 택시 | 약 25~30분", tip: "모든 짐 지참 후 고라리조트로 이동" },
-      { day: 4, title: "[10:30] ♨️ 고라리조트 (高罗温泉)", storeName: "高罗温泉", trans: "🚕 택시 | 약 15~20분", tip: "짐 보관, 온천사우나 & 키즈 물놀이" },
-      { day: 4, title: "[16:30] ✈️ 대련 주수자 국제공항", storeName: "大连周水子国际机场", trans: "✈️ 출국 수속", tip: "공항 수속 및 여행 마무리" }
+      { day: 4, title: "[10:00] 🏨 인터컨티넨탈 체크아웃", storeName: "大连中远海运洲际酒店", trans: "🚕 택시 | 약 25~30분", tip: "모든 짐 지참 후 고라리조트로 이동" }
     ];
 
     const initialPlaces = [
-      { title: "喝丢一只鞋 (인민로점)", cat: "맛집", storeName: "喝丢一只鞋(人民路店)", tip: "양꼬치 츠란 빼달라고 꼭 요청! (不要孜然). 꿔바로우 추천." },
-      { title: "喜鼎海胆水饺", cat: "맛집", storeName: "喜鼎海胆水饺(星海店)", tip: "성게알 만두(海胆水饺) 강추. 안 매운 새우만두(虾仁水饺) 주문." },
-      { title: "Mangata Coffee", cat: "카페", storeName: "Mangata Coffee", tip: "성해바다대교 뷰 맛집 감성 카페." },
-      { title: "COMMUNE (동관거리점)", cat: "맛집", storeName: "COMMUNE(东关街店)", tip: "수제버거 & 피자 맛집. 아이들 먹기 편함." },
-      { title: "고라리조트 (高罗温泉)", cat: "온천", storeName: "高罗温泉", tip: "실내외 온천 & 키즈 풀장. 캐리어 무료 보관 가능." },
-      { title: "서안로 중앙대도", cat: "쇼핑", storeName: "中央大道旅游文化购物中心", tip: "네일샵, 미니소, 키즈카페, 대형마트 집중." }
+      { title: "喝丢一只鞋 (인민로점)", cat: "맛집", storeName: "喝丢一只鞋(人民路店)", tip: "양꼬치 츠란 빼달라고 꼭 요청! (不要孜然)." },
+      { title: "喜鼎海胆水饺", cat: "맛집", storeName: "喜鼎海胆水饺(星海店)", tip: "성게알 만두(海胆水饺) 강추." }
     ];
 
     const initialSpeech = [
       { kor: "고수 넣지 마세요", cn: "不要香菜", py: "부야오 샹차이", tip: "식당" },
-      { kor: "츠란(향신료) 넣지 마세요", cn: "不要孜然", py: "부야오 쯔란", tip: "식당" },
-      { kor: "안 매운 것으로 주세요", cn: "要不辣的", py: "야오 부 라 더", tip: "식당" },
-      { kor: "계산할게요", cn: "买单", py: "마이단", tip: "식당" },
-      { kor: "이 장소로 가주세요", cn: "请带 me 去这个地方", py: "칭 다이 워 취 저거 디팡", tip: "교통" },
-      { kor: "트렁크 좀 열어주세요", cn: "请打开后备箱", py: "칭 다카이 호우베이샹", tip: "교통" },
-      { kor: "짐을 보관할 수 있나요?", cn: "可以寄存行李吗？", py: "커이 지춘 싱리 마?", tip: "호텔" },
-      { kor: "얼마인가요?", cn: "多少钱？", py: "두오샤오 치엔?", tip: "쇼핑" },
-      { kor: "화장실이 어디인가요?", cn: "洗手间在哪里？", py: "시쇼우지엔 자이 나리?", tip: "기타/긴급" }
+      { kor: "계산할게요", cn: "买单", py: "", tip: "식당" }
     ];
 
     let currentSchedules = {};
@@ -330,29 +295,35 @@
       renderSpeech();
     });
 
-    // 🪄 중국어 자동 채우기 기능
+    // 📋 클립보드 텍스트 바로 가져오기
+    async function pasteFromClipboard() {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text) {
+          document.getElementById('sp-cn').value = text;
+          document.getElementById('sp-kor').value = text;
+          alert("📋 복사된 내용이 입력되었습니다!");
+        }
+      } catch (err) {
+        alert("클립보드 접근 권한이 필요하거나 복사된 내용이 없습니다.");
+      }
+    }
+
+    // 🪄 자동 채우기
     function autoFillChinese() {
       const inputKor = document.getElementById('sp-kor').value.trim();
-      
-      if (!inputKor) {
-        alert("한국어 표현을 먼저 입력해 주세요! (예: 고수, 얼마, 계산, 화장실 등)");
-        return;
-      }
-
-      const matched = speechDict.find(item => 
-        inputKor.includes(item.key) || item.key.includes(inputKor)
-      );
-
+      if (!inputKor) { alert("한국어 표현을 먼저 입력해 주세요!"); return; }
+      const matched = speechDict.find(item => inputKor.includes(item.key) || item.key.includes(inputKor));
       if (matched) {
         document.getElementById('sp-cn').value = matched.cn;
         document.getElementById('sp-py').value = matched.py;
         document.getElementById('sp-tip').value = matched.tip;
       } else {
-        alert("사전에 등록되어 있지 않은 표현입니다. 한자와 발음을 직접 입력해 주세요!");
+        alert("사전에 없는 표현입니다. 직관적으로 작성해 주세요!");
       }
     }
 
-    // 복사 기능
+    // 📋 클립보드 복사
     function copyToClipboard(text) {
       if (!text) return;
       navigator.clipboard.writeText(text).then(() => {
@@ -361,6 +332,15 @@
         toast.classList.remove('hidden');
         setTimeout(() => toast.classList.add('hidden'), 2000);
       });
+    }
+
+    // 🗺️ 고덕지도 검색 연동 함수
+    function openAmap(storeName) {
+      if (!storeName) return;
+      const encoded = encodeURIComponent(storeName);
+      // 고덕지도 웹/앱 검색 URL
+      const amapUrl = `https://uri.amap.com/search?keyword=${encoded}`;
+      window.open(amapUrl, '_blank');
     }
 
     // DAY 필터링
@@ -377,7 +357,6 @@
       renderSchedules();
     }
 
-    // 일정 렌더링
     function renderSchedules() {
       const container = document.getElementById('schedule-list');
       container.innerHTML = '';
@@ -414,11 +393,18 @@
             </div>
           </div>
           ${item.trans ? `<div class="text-[11px] text-slate-500 flex items-center gap-1"><i class="fa-solid fa-car text-orange-300"></i> ${item.trans}</div>` : ''}
-          ${item.tip ? `<div class="bg-orange-50/70 text-orange-950 text-[11px] p-2 rounded-xl flex items-start gap-1.5"><i class="fa-solid fa-heart text-orange-400 mt-0.5 text-[9px]"></i><div>${item.tip}</div></div>` : ''}
+          ${item.tip ? `<div class="bg-orange-50/70 text-orange-950 text-[11px] p-2 rounded-xl font-medium">${item.tip}</div>` : ''}
           ${item.storeName ? `
-            <div onclick="copyToClipboard('${item.storeName}')" class="bg-amber-50/60 hover:bg-amber-100/70 p-2 rounded-xl text-[11px] text-amber-800 font-semibold flex justify-between items-center cursor-pointer border border-amber-100/50 transition-all">
-              <span class="truncate max-w-[220px]">🏷️ ${item.storeName}</span>
-              <span class="text-[9px] bg-white px-2 py-0.5 rounded-full shadow-2xs text-amber-700 shrink-0">가게명 복사 📋</span>
+            <div class="bg-amber-50/60 p-2 rounded-xl text-[11px] text-amber-800 font-semibold flex justify-between items-center border border-amber-100/50">
+              <span class="truncate max-w-[180px]">🏷️ ${item.storeName}</span>
+              <div class="flex items-center gap-1 shrink-0">
+                <button onclick="copyToClipboard('${item.storeName}')" class="text-[9px] bg-white px-2 py-0.5 rounded-full shadow-2xs text-amber-700 border border-amber-200 hover:bg-amber-100">
+                  📋 복사
+                </button>
+                <button onclick="openAmap('${item.storeName}')" class="text-[9px] bg-blue-500 text-white px-2 py-0.5 rounded-full shadow-2xs font-bold hover:bg-blue-600">
+                  🗺️ 고덕지도
+                </button>
+              </div>
             </div>
           ` : ''}
         `;
@@ -426,11 +412,9 @@
       });
     }
 
-    // 장소 렌더링
     function renderPlaces() {
       const container = document.getElementById('places-list');
       container.innerHTML = '';
-
       Object.keys(currentPlaces).forEach(key => {
         const item = currentPlaces[key];
         const card = document.createElement('div');
@@ -449,9 +433,16 @@
           </div>
           ${item.tip ? `<div class="bg-orange-50/70 text-orange-950 text-[11px] p-2 rounded-xl">${item.tip}</div>` : ''}
           ${item.storeName ? `
-            <div onclick="copyToClipboard('${item.storeName}')" class="bg-amber-50/60 hover:bg-amber-100/70 p-2 rounded-xl text-[11px] text-amber-800 font-semibold flex justify-between items-center cursor-pointer border border-amber-100/50">
-              <span class="truncate max-w-[220px]">🏷️ ${item.storeName}</span>
-              <span class="text-[9px] bg-white px-2 py-0.5 rounded-full shadow-2xs text-amber-700 shrink-0">가게명 복사 📋</span>
+            <div class="bg-amber-50/60 p-2 rounded-xl text-[11px] text-amber-800 font-semibold flex justify-between items-center border border-amber-100/50">
+              <span class="truncate max-w-[180px]">🏷️ ${item.storeName}</span>
+              <div class="flex items-center gap-1 shrink-0">
+                <button onclick="copyToClipboard('${item.storeName}')" class="text-[9px] bg-white px-2 py-0.5 rounded-full text-amber-700 border border-amber-200 hover:bg-amber-100">
+                  📋 복사
+                </button>
+                <button onclick="openAmap('${item.storeName}')" class="text-[9px] bg-blue-500 text-white px-2 py-0.5 rounded-full font-bold hover:bg-blue-600">
+                  🗺️ 고덕지도
+                </button>
+              </div>
             </div>
           ` : ''}
         `;
@@ -459,7 +450,6 @@
       });
     }
 
-    // 회화 렌더링
     function renderSpeech() {
       const container = document.getElementById('speech-list');
       container.innerHTML = '';
@@ -483,7 +473,7 @@
           <div class="flex items-center justify-between bg-orange-50/50 p-2.5 rounded-xl border border-orange-100/40">
             <div>
               <div class="text-orange-600 font-bold text-sm">${item.cn || ''}</div>
-              <div class="text-[10px] text-slate-400">${item.py || ''}</div>
+              ${item.py ? `<div class="text-[10px] text-slate-400">${item.py}</div>` : ''}
             </div>
             <button onclick="speakChinese('${item.cn}')" class="bg-white p-2 rounded-full shadow-2xs text-orange-500 hover:bg-orange-100 text-sm flex items-center justify-center w-8 h-8">
               🔊
@@ -494,7 +484,6 @@
       });
     }
 
-    // 모달 및 수정/저장 기능
     function openModal(type) {
       currentModalType = type;
       ['schedule', 'place', 'speech'].forEach(t => {
@@ -572,7 +561,7 @@
     }
 
     function deleteData(path, key) {
-      if (confirm("이 항목을 삭제하시겠습니까?")) {
+      if (confirm("삭제하시겠습니까?")) {
         db.ref(`${path}/${key}`).remove();
       }
     }
@@ -601,7 +590,7 @@
     }
 
     function resetToInitialData() {
-      if (confirm("모든 일정을 초기 데이터로 다시 복구하시겠습니까?")) {
+      if (confirm("초기 데이터로 복구하시겠습니까?")) {
         const schObj = {}, plObj = {}, spObj = {};
         initialSchedules.forEach(item => schObj[db.ref("schedules").push().key] = item);
         initialPlaces.forEach(item => plObj[db.ref("places").push().key] = item);
