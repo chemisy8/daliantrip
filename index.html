@@ -334,15 +334,18 @@
       });
     }
 
-    // 🗺️ 고덕지도 검색 연동 함수
-    function openAmap(storeName) {
-      if (!storeName) return;
-      const encoded = encodeURIComponent(storeName);
-      // 고덕지도 웹/앱 검색 URL
-      const amapUrl = `https://uri.amap.com/search?keyword=${encoded}`;
-      window.open(amapUrl, '_blank');
-    }
+    // 🗺️ 고덕지도 검색 연동 함수 (수정본)
+function openAmap(storeName) {
+  if (!storeName) return;
+  const encoded = encodeURIComponent(storeName);
+  
+  // 고덕지도 웹/모바일 웹 정식 검색 URL
+  const amapUrl = `https://www.amap.com/search?query=${encoded}`;
+  
+  window.open(amapUrl, '_blank');
+}
 
+  
     // DAY 필터링
     function filterDay(day) {
       selectedDay = day;
